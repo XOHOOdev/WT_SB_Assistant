@@ -1,0 +1,93 @@
+﻿@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Localization
+@using Sparta.BlazorUI.Permissions
+@inject IStringLocalizer<SharedResource> Localizer
+
+@* <div class="top-row ps-3 navbar navbar-expand-md fixed-top"> *@
+<div class="navbar navbar-expand-md fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <img src="/img/Sparta.svg" height="30" alt="Project SPARTA Logo" />
+            <span>Project Sparta</span>
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="@NavMenuCssClass navbar-collapse justify-content-end" id="navbarCollapse">
+            <LoginDisplay />
+            <ColorSelector />
+            <CultureSelector />
+        </div>
+    </div>
+</div>
+
+<div class="sidebar position-fixed" style="padding-top:2.5rem">
+    <div class="@NavMenuCssClass nav-scrollable navbar-collapse" style="width:12.5rem" @onclick="ToggleNavMenu">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> @Localizer["Home"]
+            </NavLink>
+        </div>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.UserManagement.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="usermanagement">
+                        <span class="oi oi-people" aria-hidden="true"></span> @Localizer["UserManagement"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.Configuration.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="configuration">
+                        <span class="oi oi-wrench" aria-hidden="true"></span> @Localizer["Config"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.Logging.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="logging">
+                        <span class="oi oi-justify-left" aria-hidden="true"></span> @Localizer["Logs"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.Servers.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="server">
+                        <span class="oi oi-cloud" aria-hidden="true"></span> @Localizer["Servers"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.Modules.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="modules">
+                        <span class="oi oi-code" aria-hidden="true"></span> @Localizer["Modules"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
+    </div>
+</div>
+
+@code {
+    private bool _collapseNavMenu = true;
+
+    private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        _collapseNavMenu = !_collapseNavMenu;
+    }
+}

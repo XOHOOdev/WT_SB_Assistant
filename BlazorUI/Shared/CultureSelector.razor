@@ -1,0 +1,91 @@
+﻿@using System.Globalization
+@using Sparta.BlazorUI.Localization
+@inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> Localizer
+
+<div class="dropdown">
+    <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" id="bd-lang" data-bs-toggle="dropdown" aria-label="Toggle language ()">
+        <svg class="bi my-1 theme-icon-active-lang">
+            <use href="@GetSvgName(Culture)"></use>
+        </svg>
+        <span class="d-lg-none ms-2" id="bd-lang-text">@Localizer["ToggleLanguage"]</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-lang-text">
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => SetCulture("en-US")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#american-flag"></use>
+                </svg>
+                @Localizer["EnglishUS"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => SetCulture("en-GB")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#british-flag"></use>
+                </svg>
+                @Localizer["EnglishGB"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => SetCulture("de-DE")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#german-flag"></use>
+                </svg>
+                @Localizer["German"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+    </ul>
+</div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        Culture = CultureInfo.CurrentCulture;
+    }
+
+    private void SetCulture(string culture)
+    {
+        Culture = new CultureInfo(culture);
+    }
+
+    private string GetSvgName(CultureInfo cultureInfo)
+    {
+        return cultureInfo.Name switch
+        {
+            "en-US" => "#american-flag",
+            "en-GB" => "#british-flag",
+            "de-DE" => "#german-flag",
+            _ => "#error"
+        };
+    }
+
+    private CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                var uri = new Uri(Navigation.Uri)
+                    .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+                var cultureEscaped = Uri.EscapeDataString(value.Name);
+                var uriEscaped = Uri.EscapeDataString(uri);
+
+                Navigation.NavigateTo(
+                    $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}",
+                    true);
+            }
+        }
+    }
+}

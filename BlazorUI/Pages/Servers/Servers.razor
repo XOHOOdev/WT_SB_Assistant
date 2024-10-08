@@ -1,0 +1,113 @@
+﻿@page "/server"
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.ServerData
+@using Sparta.BlazorUI.Permissions
+@using Sparta.Core.DataAccess.DatabaseAccess.Entities
+
+@inject ServerService ServService
+@inject IStringLocalizer<Servers> Localizer
+@inject IJSRuntime Js
+@attribute [HasPermission(Permissions.Servers.View)]
+
+<PageTitle>@Localizer["Server"]</PageTitle>
+@if (_servers == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <h3>@Localizer["Server"]</h3>
+        </div>
+        <div class="card-body container">
+            @foreach (var server in _servers)
+            {
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@server.Id</span>
+                    <input type="text" class="form-control" @bind="server.Name">
+                    @if (_serverTypes != null)
+                    {
+                        if (_serverTypes.Count() == 1)
+                        {
+                            <span class="input-group-text">@_serverTypes.First()</span>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">@Localizer["Type"]</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @foreach (var serverType in _serverTypes)
+                                {
+
+                                }
+                            </ul>
+                        }
+                    }
+                    <span class="input-group-text">@Localizer["Url"]</span>
+                    <input type="text" class="form-control" @bind="server.Url">
+                    <span class="input-group-text">@Localizer["Port"]</span>
+                    <input type="text" class="form-control" @bind="server.Port">
+                    <span class="input-group-text">@Localizer["User"]</span>
+                    <input type="text" class="form-control" @bind="server.Username">
+                    <span class="input-group-text">@Localizer["Password"]</span>
+                    <input type="password" class="form-control" @bind="server.Password">
+                    <AuthorizeView>
+                        @if (context.User.Authorize(Permissions.Servers.Edit))
+                        {
+                            <i class="btn btn-success bi-floppy-fill" @onclick="SaveChanges"></i>
+                        }
+                        @if (context.User.Authorize(Permissions.Servers.Delete))
+                        {
+                            <i class="btn btn-danger bi-trash3-fill" @onclick='() => DeleteServer(server)'></i>
+                        }
+                    </AuthorizeView>
+                </div>
+            }
+        </div>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.Modules.Create))
+            {
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input name="roleName" class="form-control w-25" @bind=_newServerName>
+                        <button class="btn btn-info" @onclick=CreateNewServer>@Localizer["NewServer"]</button>
+                    </div>
+                </div>
+            }
+        </AuthorizeView>
+    </div>
+}
+
+@code {
+    private IEnumerable<Server>? _servers;
+    private string? _newServerName;
+    private IEnumerable<ServerType>? _serverTypes;
+
+    protected override void OnInitialized()
+    {
+        SetServers();
+    }
+
+    private void SetServers()
+    {
+        _servers = ServService.GetServers();
+        _serverTypes = Enum.GetValues(typeof(ServerType)).Cast<ServerType>();
+    }
+
+    private void CreateNewServer()
+    {
+        ServService.CreateServer(_newServerName ?? "New Server");
+    }
+
+    private void SaveChanges()
+    {
+        ServService.SaveChanges();
+    }
+
+    private void DeleteServer(Server server)
+    {
+        ServService.DeleteServer(server);
+    }
+}

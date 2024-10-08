@@ -1,0 +1,292 @@
+﻿@page "/modules"
+@using System.Security.Claims
+@using Microsoft.IdentityModel.Tokens
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.ModulesData
+@using Sparta.BlazorUI.Permissions
+@using Sparta.Core.DataAccess.DatabaseAccess.Entities
+@using Sparta.Core.Dto.Modules
+@using Sparta.Modules.Interface
+
+@inject ModulesService ModService
+@inject IStringLocalizer<Modules> Localizer
+@inject IJSRuntime Js
+@attribute [HasPermission(Permissions.Modules.View)]
+
+<PageTitle>@Localizer["Modules"]</PageTitle>
+
+<h3>@Localizer["Modules"]</h3>
+@if (_moduleCategories == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    @foreach (var moduleCategory in _moduleCategories)
+                    {
+                        <li class="nav-item">
+                            <button class="btn" type="submit" @onclick='() => CategorySelected(moduleCategory)'>@Localizer[moduleCategory.Name]</button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    if (_selectedModuleCategory != null)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h3>@Localizer[_selectedModuleCategory.Name]</h3>
+            </div>
+            <div class="card-body container">
+                @foreach (var module in _selectedModuleCategory.Modules)
+                {
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">@Localizer["Name"]</span>
+                        <input type="text" class="form-control" @bind="module.Name">
+                        <input type="checkbox" class="btn-check" @bind="module.Enabled" id="@($"check{module.Type.Name}{module.Id}")" />
+                        <label class="btn btn-outline-primary" for="@($"check{module.Type.Name}{module.Id}")">@Localizer["Enabled"]</label>
+                        <i class="btn btn-success bi-floppy-fill" @onclick="SaveChanges"></i>
+                        <AuthorizeView>
+                            @if (context.User.Authorize(Permissions.Modules.Edit))
+                            {
+                                <i class="btn btn-secondary bi-wrench" @onclick='()=>LoadModuleParameters(module, context.User)' data-bs-toggle="modal" data-bs-target="#createEditModule"></i>
+                            }
+                            @if (context.User.Authorize(Permissions.Modules.Delete))
+                            {
+                                <i class="btn btn-danger bi-trash3-fill" @onclick='(()=>DeleteModule(module))'></i>
+                            }
+                        </AuthorizeView>
+                    </div>
+                }
+            </div>
+            <AuthorizeView>
+                @if (context.User.Authorize(Permissions.Modules.Create))
+                {
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEditModule" @onclick="()=>CreateNewParams(context.User)">@Localizer["CreateModule"]</button>
+                    </div>
+                }
+            </AuthorizeView>
+        </div>
+    }
+}
+
+<div class="modal fade" id="createEditModule" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["CreateModule"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (_params != null)
+                {
+                    foreach (var parameter in _params)
+                    {
+                        switch (parameter.Type)
+                        {
+                            case ParameterType.Text:
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">@parameter.Name</span>
+                                    <input type="text" class="form-control" @bind="parameter.Content">
+                                </div>
+                                break;
+                            case ParameterType.LargeText:
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">@parameter.Name</span>
+                                    <textarea class="form-control" @bind="parameter.Content"></textarea>
+                                </div>
+                                break;
+                            case ParameterType.Number:
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">@parameter.Name</span>
+                                    <input type="number" class="form-control" @bind="parameter.Content">
+                                </div>
+                                break;
+                            case ParameterType.Bool:
+                                <div class="input-group mb-3">
+                                    <input type="checkbox" class="btn-check" @bind="parameter.Content" id="@parameter.Name" />
+                                    <label class="btn btn-outline-primary" for="@parameter.Name">@parameter.Name</label>
+                                </div>
+                                break;
+                            case ParameterType.HllServer:
+                                <div class="input-group mb-3">
+                                    <span for="hllServerDataList" class="input-group-text">@parameter.Name</span>
+                                    <input type="search" class="form-control" list="hllServerListOptions" id="hllServerDataList" @bind="parameter.Content" placeholder="Type to search...">
+                                    <datalist id="hllServerListOptions">
+                                        @foreach (var option in parameter.Options)
+                                        {
+                                            <option label="@option.Name" value="@option.Id" />
+                                        }
+                                    </datalist>
+                                </div>
+                                break;
+                            case ParameterType.DiscordChannel:
+                                <div class="input-group mb-3">
+                                    <span for="channelDataList" class="input-group-text">@parameter.Name</span>
+                                    <input type="search" class="form-control" list="channelListOptions" id="channelDataList" @bind="parameter.Content" placeholder="Type to search...">
+                                    <datalist id="channelListOptions">
+                                        @{
+                                            var channelOptions = parameter.Options.Where(r =>
+                                            _params.FirstOrDefault(p => p.Type == ParameterType.DiscordGuild) is not { } guildParam
+                                            || guildParam.Content.IsNullOrEmpty()
+                                            || ((DiscordChannel)r).DiscordGuild.Id == ulong.Parse(guildParam.Content));
+
+                                            foreach (var option in channelOptions)
+                                            {
+                                                <option value="@option.Id">@option.Name</option>
+                                            }
+                                        }
+                                    </datalist>
+                                </div>
+                                break;
+                            case ParameterType.DiscordUser:
+                                <div class="input-group mb-3">
+                                    <span for="@($"userDataList{parameter.Name}")" class="input-group-text">@parameter.Name</span>
+                                    <input type="search" class="form-control" list="@($"userListOptions{parameter.Name}")" id="@($"userDataList{parameter.Name}")" @bind="parameter.Content" placeholder="Type to search...">
+                                    <datalist id="@($"userListOptions{parameter.Name}")">
+                                        @{
+                                            var userOptions = parameter.Options.Where(u =>
+                                            (_params.FirstOrDefault(p => p.Type == ParameterType.DiscordGuild) is not { } guildParam
+                                            || guildParam.Content.IsNullOrEmpty()
+                                            || ((DiscordUser)u).DiscordGuilds.Any(g => g.Id == ulong.Parse(guildParam.Content)))
+                                            && (_params.FirstOrDefault(p => p.Type == ParameterType.DiscordRole && (!char.IsDigit(parameter.Name.Last()) || parameter.Name.Last() == p.Name.Last())) is not { } roleParams
+                                            || roleParams.Content.IsNullOrEmpty()
+                                            || ((DiscordUser)u).Roles.Any(r => r.Id == ulong.Parse(roleParams.Content)))
+                                            );
+
+                                            foreach (var option in userOptions)
+                                            {
+                                                <option value="@option.Id">@option.Name</option>
+                                            }
+                                        }
+                                    </datalist>
+                                </div>
+                                break;
+                            case ParameterType.DiscordRole:
+                                <div class="input-group mb-3">
+                                    <span for="@($"roleDataList{parameter.Name}")" class="input-group-text">@parameter.Name</span>
+                                    <input type="search" class="form-control" list="@($"roleListOptions{parameter.Name}")" id="@($"roleDataList{parameter.Name}")" @bind="parameter.Content" placeholder="Type to search...">
+                                    <datalist id="@($"roleListOptions{parameter.Name}")">
+                                        @{
+                                            var roleOptions = parameter.Options.Where(r =>
+                                            (_params.FirstOrDefault(p => p.Type == ParameterType.DiscordGuild) is not { } guildParam
+                                            || guildParam.Content.IsNullOrEmpty()
+                                            || ((DiscordRole)r).Guild.Id == ulong.Parse(guildParam.Content))
+                                            && (_params.FirstOrDefault(p => p.Type == ParameterType.DiscordUser && (!char.IsDigit(parameter.Name.Last()) || parameter.Name.Last() == p.Name.Last())) is not { } userParams
+                                            || userParams.Content.IsNullOrEmpty()
+                                            || ((DiscordRole)r).Users.Any(u => u.Id == ulong.Parse(userParams.Content)))
+                                            ).ToArray();
+
+                                            foreach (var option in roleOptions)
+                                            {
+                                                <option value="@option.Id">@option.Name</option>
+                                            }
+                                        }
+                                    </datalist>
+                                </div>
+                                break;
+                            case ParameterType.DiscordGuild:
+                                <div class="input-group mb-3">
+                                    <span for="guildDataList" class="input-group-text">@parameter.Name</span>
+                                    <input type="search" class="form-control" list="guildListOptions" id="guildDataList" @bind="parameter.Content" placeholder="Type to search...">
+                                    <datalist id="guildListOptions">
+                                        @foreach (var option in parameter.Options)
+                                        {
+                                            <option label="@option.Name" value="@option.Id" />
+                                        }
+                                    </datalist>
+                                </div>
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
+                    }
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="CreateModule">@Localizer["Create"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ModuleCategory? _selectedModuleCategory;
+    private IEnumerable<ModuleCategory>? _moduleCategories;
+    private ModuleParametersBase? _selectedModuleParameters;
+    private Module? _currentModule;
+    private List<ParamInfo>? _params;
+
+    protected override void OnInitialized()
+    {
+        SetModules();
+        if (_moduleCategories == null) return;
+        _selectedModuleCategory = _moduleCategories.First();
+    }
+
+    private void CategorySelected(ModuleCategory category)
+    {
+        _selectedModuleCategory = category;
+    }
+
+    private void CreateNewParams(ClaimsPrincipal user)
+    {
+        if (_selectedModuleCategory == null) return;
+        _selectedModuleParameters = ModService.GetModuleParameters(_selectedModuleCategory.Name);
+        _params = _selectedModuleParameters?.AllParameters.ToList();
+
+        if (_params != null) ModService.SetOptions(ref _params, user);
+    }
+
+    private void SetModules()
+    {
+        _moduleCategories = ModService.GetModuleCategories();
+        StateHasChanged();
+    }
+
+    private void CreateModule()
+    {
+        if (_selectedModuleParameters == null || _params == null || _selectedModuleCategory == null) return;
+        if (_currentModule == null)
+        {
+            ModService.CreateModule(_params, _selectedModuleCategory);
+        }
+        else
+        {
+            ModService.SetModuleParameters(_currentModule, _params);
+            _currentModule = null;
+        }
+
+        SetModules();
+    }
+
+    private void SaveChanges()
+    {
+        ModService.SaveChanges();
+    }
+
+    private void LoadModuleParameters(Module module, ClaimsPrincipal user)
+    {
+        _selectedModuleParameters = ModService.GetModuleParameters(module);
+        _currentModule = module;
+        _params = _selectedModuleParameters?.AllParameters.ToList();
+
+        if (_params != null) ModService.SetOptions(ref _params, user);
+    }
+
+    private void DeleteModule(Module module)
+    {
+        //TODO add modal to confirm delete
+        ModService.DeleteModule(module);
+    }
+}

@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.UserManagementData
+@using Sparta.BlazorUI.Permissions
+@inject IStringLocalizer<UserManagement> Localizer
+@inject UserManagementService ManagementService
+@attribute [HasPermission(Permissions.UserManagement.View)]
+
+<div class="card">
+    <div class="card-header">
+        <h3>@Localizer["Users"]</h3>
+    </div>
+    <div class="card-body container">
+        <table class="table table-striped table-hover" id="roleTable">
+            <thead>
+            <tr>
+                <th>@Localizer["Username"]</th>
+                <th>@Localizer["Id"]</th>
+                <th>@Localizer["Actions"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Id</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @Localizer["Actions"]
+                            </button>
+                            <div class="dropdown-menu shadow animated--grow-in">
+                                <AuthorizeView>
+                                    @if (context.User.Authorize(Permissions.UserManagement.Delete) && context.User.Identity?.Name != user.UserName)
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item" @onclick='() => DeleteUser(user)'>@Localizer["Delete"]</a>
+                                    }
+                                    @if (context.User.Authorize(Permissions.UserManagement.Edit))
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#manageRolesModal" @onclick='() => LoadUserRoles(user)'>@Localizer["ManageRoles"]</a>
+                                        <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#manageSteamIdModal" @onclick='() => LoadUserSteamId(user)'>@Localizer["ManageSteamId"]</a>
+                                    }
+                                </AuthorizeView>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="manageRolesModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["ManageRoles"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (userRoles.User != null)
+                {
+                    <h6>@string.Format(Localizer["UserRolesRole"], userRoles.User.UserName)</h6>
+                }
+                <div class="btn-group">
+                    @foreach (var role in userRoles.Roles)
+                    {
+                        <input type="checkbox" class="btn-check" @bind="role.Selected" id="@($"check{role.Name}")"/>
+                        <label class="btn btn-outline-primary" for="@($"check{role.Name}")">@role.Name</label>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SaveUserRoles">@Localizer["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="manageSteamIdModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["ManageSteamId"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (userSteamId.User != null)
+                {
+                    <h6>@string.Format(Localizer["UserRolesRole"], userSteamId.User.UserName)</h6>
+                }
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon3">@Localizer["SteamId"]</span>
+                    <input type="text" class="form-control" @bind="userSteamId.SteamId">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SaveUserSteamId">@Localizer["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<IdentityUser> users = null!;
+    private UserRoleModel userRoles = null!;
+    private UserSteamId userSteamId = null!;
+
+    protected override void OnInitialized()
+    {
+        users = ManagementService.GetUsers();
+        userRoles = new UserRoleModel { Roles = new List<UserRoleEntryModel>() };
+        userSteamId = new UserSteamId();
+    }
+
+    private void DeleteUser(IdentityUser user)
+    {
+        ManagementService.DeleteUser(user);
+    }
+
+    private void LoadUserRoles(IdentityUser user)
+    {
+        userRoles = ManagementService.GetUserRoles(user);
+    }
+
+    private void SaveUserRoles()
+    {
+        ManagementService.SaveUserRoles(userRoles);
+    }
+
+    private void LoadUserSteamId(IdentityUser user)
+    {
+        userSteamId = ManagementService.GetSteamId(user);
+    }
+
+    private void SaveUserSteamId()
+    {
+        ManagementService.SaveUserSteamId(userSteamId);
+    }
+
+}

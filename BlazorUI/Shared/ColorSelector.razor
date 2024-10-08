@@ -1,0 +1,132 @@
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Sparta.BlazorUI.Localization
+@using Sparta.BlazorUI.Services
+@inject IStringLocalizer<SharedResource> Localizer
+@inject ProtectedLocalStorage BrowserStorage
+@inject NavigationManager nav
+@inject IJSRuntime Js
+@inject IHttpClientFactory ClientFactory
+
+<div class="dropdown">
+    <button class="btn btn-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <svg class="bi my-1 theme-icon-active-color">
+            <use href="@CurrentThemeIcon"></use>
+        </svg>
+        <span class="d-lg-none ms-2" id="bd-theme-text">@Localizer["ToggleTheme"]</span>
+    </button>
+    <ul class="dropdown-menu">
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => ChangeColor("light")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#sun-fill"></use>
+                </svg>
+                @Localizer["Light"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => ChangeColor("dark")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#moon-stars-fill"></use>
+                </svg>
+                @Localizer["Dark"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" @onclick='() => ChangeColor("auto")'>
+                <svg class="bi me-2 bg-opacity-50 theme-icon">
+                    <use href="#circle-half"></use>
+                </svg>
+                @Localizer["Auto"]
+                <svg class="bi ms-auto d-none">
+                    <use href="#check2"></use>
+                </svg>
+            </button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    function prefersDarkMode() {
+        if (window.matchMedia) {
+            var match = window.matchMedia('(prefers-color-scheme: dark)')
+            return match.matches;
+        }
+        return false;
+    }
+</script>
+
+@code {
+    [Parameter] public string? CurrentThemeIcon { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SetStoredTheme();
+        }
+    }
+
+    private async Task SetStoredTheme()
+    {
+        CacheService.AppCache.TryGetValue("styleName", out var style);
+
+        if (string.IsNullOrEmpty(style))
+        {
+            try
+            {
+                var storedTheme = await BrowserStorage.GetAsync<string>("theme");
+                if (storedTheme.Success)
+                {
+                    var color = storedTheme.Value ?? "auto";
+                    CurrentThemeIcon = GetImageNameFromThemeName(color);
+                    await ChangeColor(color);
+                    StateHasChanged();
+                }
+                else
+                {
+                    await ChangeColor("auto");
+                }
+            }
+            catch (Exception)
+            {
+                await ChangeColor("auto");
+            }
+        }
+        else
+        {
+            await BrowserStorage.SetAsync("theme", style);
+            CurrentThemeIcon = GetImageNameFromThemeName(style);
+            StateHasChanged();
+        }
+    }
+
+    private async Task ChangeColor(string color)
+    {
+        CacheService.AppCache["styleName"] = color;
+        if (color == "auto")
+        {
+            var result = await Js.InvokeAsync<bool>("prefersDarkMode", null);
+            color = result ? "dark" : "light";
+        }
+
+        CacheService.AppCache["style"] = color;
+        nav.NavigateTo(nav.Uri, true);
+    }
+
+    private string GetImageNameFromThemeName(string themeName)
+    {
+        return themeName switch
+        {
+            "dark" => "#moon-stars-fill",
+            "light" => "#sun-fill",
+            _ => "#circle-half"
+        };
+    }
+
+}

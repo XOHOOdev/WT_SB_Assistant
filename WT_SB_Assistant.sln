@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTBattleExtractor", "WTBattleExtractor\WTBattleExtractor.csproj", "{829D6708-D72D-4A2F-AE04-A4BECFDA14BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTBattleExtractor", "WTBattleExtractor\WTBattleExtractor.csproj", "{829D6708-D72D-4A2F-AE04-A4BECFDA14BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{39C27460-8E52-49B3-BC81-6E5853A967ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{829D6708-D72D-4A2F-AE04-A4BECFDA14BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{829D6708-D72D-4A2F-AE04-A4BECFDA14BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{829D6708-D72D-4A2F-AE04-A4BECFDA14BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39C27460-8E52-49B3-BC81-6E5853A967ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C27460-8E52-49B3-BC81-6E5853A967ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C27460-8E52-49B3-BC81-6E5853A967ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C27460-8E52-49B3-BC81-6E5853A967ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

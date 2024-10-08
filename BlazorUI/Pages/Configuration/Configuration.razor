@@ -1,0 +1,157 @@
+﻿@page "/configuration"
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.ConfigurationData
+@using Sparta.BlazorUI.Permissions
+
+@inject ConfigurationService ConfService
+@inject IStringLocalizer<Configuration> Localizer
+@inject IJSRuntime Js
+@attribute [HasPermission(Permissions.Configuration.View)]
+
+<PageTitle>@Localizer["Configuration"]</PageTitle>
+
+<h3>@Localizer["Configuration"]</h3>
+@if (_configurations == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    @foreach (var configuration in _configurations)
+                    {
+                        <li class="nav-item">
+                            <button class="btn" type="submit" @onclick='() => CategorySelected(configuration)'>@configuration.Name</button>
+                        </li>
+                    }
+                    <li>
+                        <AuthorizeView>
+                            @if (context.User.Authorize(Permissions.Configuration.Edit))
+                            {
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveToFileModal">@Localizer["SaveToFile"]</button>
+                            }
+                        </AuthorizeView>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    if (_selectedCategory != null)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h3>@_selectedCategory.Name</h3>
+            </div>
+            <div class="card-body container">
+                @if (_selectedCategory.ConfigurationElements.Count != 0)
+                {
+                    foreach (var configurationElement in _selectedCategory.ConfigurationElements)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <p>@configurationElement.Name</p>
+                            </div>
+                            <div class="col-10">
+                                <input class="form-control" @bind="configurationElement.Value"/>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <AuthorizeView>
+                @if (context.User.Authorize(Permissions.Configuration.Edit))
+                {
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="showSavedToast" @onclick='SaveChanges'>@Localizer["Save"]</button>
+                    </div>
+                }
+            </AuthorizeView>
+        </div>
+    }
+}
+
+<div class="modal fade" id="saveToFileModal" tabindex="-1" aria-labelledby="saveToFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="saveToFileModalLabel">@Localizer["SaveToFile"]</h1>
+            </div>
+            <div class="modal-body">
+                @Localizer["SaveToFileText"]
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SaveConfigurations">@Localizer["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="saveToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                @Localizer["SavedText"]
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function enableToasts() {
+        const toastTrigger = document.getElementById('showSavedToast')
+        const toastLiveExample = document.getElementById('saveToast')
+
+        if (toastTrigger) {
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+            toastTrigger.addEventListener('click', () => {
+                toastBootstrap.show()
+            })
+        }
+    }
+</script>
+
+@code {
+    private ConfigurationCategory[]? _configurations;
+    private ConfigurationCategory? _selectedCategory;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Js.InvokeVoidAsync("enableToasts");
+    }
+
+    protected override void OnInitialized()
+    {
+        SetConfigurations();
+        _selectedCategory = _configurations?.FirstOrDefault();
+    }
+
+    private void CategorySelected(ConfigurationCategory category)
+    {
+        _selectedCategory = category;
+    }
+
+    private void SaveChanges()
+    {
+        ConfService.SetConfiguration(_selectedCategory);
+        SetConfigurations();
+    }
+
+    private void SaveConfigurations()
+    {
+        ConfService.SaveConfiguration();
+    }
+
+    private void SetConfigurations()
+    {
+        _configurations = ConfService.GetConfigurations();
+        StateHasChanged();
+    }
+
+}

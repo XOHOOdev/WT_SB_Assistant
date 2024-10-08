@@ -1,0 +1,142 @@
+﻿@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.UserManagementData
+@using Sparta.BlazorUI.Permissions
+@using Sparta.Core.DataAccess.DatabaseAccess.Entities
+@inject IStringLocalizer<UserManagement> Localizer
+@inject UserManagementService ManagementService
+@attribute [HasPermission(Permissions.UserManagement.View)]
+
+<div class="card">
+    <div class="card-header">
+        <h3>@Localizer["Roles"]</h3>
+    </div>
+    <div class="card-body container">
+        <table class="table table-striped table-hover" id="roleTable">
+            <thead>
+            <tr>
+                <th>@Localizer["RoleName"]</th>
+                <th>@Localizer["Id"]</th>
+                <th>@Localizer["Actions"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var role in _roles)
+            {
+                <tr>
+                    <td>@role.Name</td>
+                    <td>@role.Id</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @Localizer["Actions"]
+                            </button>
+                            <div class="dropdown-menu shadow animated--grow-in">
+                                <AuthorizeView>
+                                    @if (context.User.Authorize(Permissions.UserManagement.Delete))
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item" @onclick='() => DeleteRole(role)'>@Localizer["Delete"]</a>
+                                    }
+                                    @if (context.User.Authorize(Permissions.UserManagement.Edit))
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#managePermissionsModal" @onclick='() => LoadPermissions(role)'>@Localizer["ManagePermissions"]</a>
+                                                <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#manageGuildsModal" @onclick='() => LoadPermissions(role)'>@Localizer["ManageDiscordGuilds"]</a>
+                                    }
+                                </AuthorizeView>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <AuthorizeView>
+        @if (context.User.Authorize(Permissions.UserManagement.Create))
+        {
+            <div class="card-footer">
+                <div class="input-group">
+                    <input name="roleName" class="form-control w-25" @bind=_newRoleName>
+                    <button class="btn btn-info" @onclick=AddNewRoleAsync>@Localizer["NewRole"]</button>
+                </div>
+            </div>
+        }
+    </AuthorizeView>
+</div>
+
+<div class="modal fade" id="managePermissionsModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["ManagePermissions"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    <PermissionManagement Permissions="_rolePermissions.RolePermissions"/>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SavePermissions">@Localizer["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="manageGuildsModal" data-bs-keyboard="false" data-bs-backdrop="static" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["ManageDiscordGuilds"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    <div class="btn-group" role="group">
+                        @foreach (var dcGuild in _rolePermissions.DiscordGuilds)
+                        {
+                            <input type="checkbox" class="btn-check" @bind="dcGuild.Selected" id="@($"checkDG{dcGuild.Id}")"/>
+                            <label class="btn btn-outline-primary" for="@($"checkDG{dcGuild.Id}")">@dcGuild.Name</label>
+                        }
+                    </div>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SavePermissions">@Localizer["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<ApplicationRole> _roles = null!;
+    private RolePermission _rolePermissions = null!;
+    private string? _newRoleName;
+
+    protected override void OnInitialized()
+    {
+        _roles = ManagementService.GetRoles();
+        _rolePermissions = new RolePermission { RolePermissions = new List<IPermissionModel>(), DiscordGuilds = new List<DiscordGuildModel>() };
+    }
+
+    private async Task AddNewRoleAsync()
+    {
+        await ManagementService.AddNewRoleAsync(_newRoleName);
+    }
+
+    private void DeleteRole(ApplicationRole role)
+    {
+        ManagementService.DeleteRole(role);
+    }
+
+    private void LoadPermissions(ApplicationRole role)
+    {
+        _rolePermissions = ManagementService.GetPermissions(role);
+    }
+
+    private void SavePermissions()
+    {
+        ManagementService.SavePermissions(_rolePermissions);
+    }
+}

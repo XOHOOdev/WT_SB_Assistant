@@ -1,0 +1,22 @@
+﻿@using Sparta.BlazorUI.Localization
+@inject IStringLocalizer<SharedResource> Localizer
+
+
+<AuthorizeView>
+    <Authorized>
+        <form action="Identity/Account/Manage">
+            <button type="submit" class="btn">@string.Format(Localizer["HelloString"], context.User.Identity?.Name)</button>
+        </form>
+        <form method="post" action="Identity/Account/Logout">
+            <button type="submit" class="btn">@Localizer["Logout"]</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <form action="Identity/Account/Register">
+            <button type="submit" class="btn">@Localizer["Register"]</button>
+        </form>
+        <form action="Identity/Account/Login">
+            <button type="submit" class="btn">@Localizer["Login"]</button>
+        </form>
+    </NotAuthorized>
+</AuthorizeView>

@@ -1,0 +1,157 @@
+﻿@page "/logging"
+@using System.Globalization
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.LoggingData
+@using Sparta.BlazorUI.Permissions
+@using Sparta.Core.DataAccess.DatabaseAccess.Entities
+@using Sparta.Core.Logger
+
+@inject LoggingService LogService
+@inject IStringLocalizer<Logging> Localizer
+@inject IJSRuntime Js
+@attribute [HasPermission(Permissions.Logging.View)]
+
+@if (_logs == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <h3>@Localizer["Logs"]</h3>
+            <div class="input-group mb-3">
+                <span class="input-group-text">@Localizer["Range"]</span>
+                <input type="datetime-local" class="form-control" @bind="_logTimeMin" />
+                <input type="datetime-local" class="form-control" @bind="_logTimeMax" />
+                <span class="input-group-text">@Localizer["Count"]</span>
+                <input type="number" class="form-control" @bind="_logCount" />
+                <span class="input-group-text">@Localizer["Severity"]</span>
+                <select class="form-select" aria-label="Severity select" @bind="_severityNum">
+                    <option value="0">@Localizer["Critical"]</option>
+                    <option value="1">@Localizer["Exception"]</option>
+                    <option value="2">@Localizer["Warning"]</option>
+                    <option value="3">@Localizer["Info"]</option>
+                    <option value="4">@Localizer["Verbose"]</option>
+                    <option value="5">@Localizer["Debug"]</option>
+                </select>
+                <button type="button" class="btn btn-outline-secondary" role="status" @onclick="SetLogs">
+                    <div class="spinner-border">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="card-body container">
+            <div class="accordion" id="logAccordion">
+                @foreach (var log in _logs)
+                {
+                    var bgColor = log.Severity switch
+                    {
+                        LogSeverity.Critical => "darkred",
+                        LogSeverity.Exception => "red",
+                        LogSeverity.Warning => "yellow",
+                        LogSeverity.Info => "color()",
+                        LogSeverity.Verbose => "gray",
+                        LogSeverity.Debug => "black",
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+
+                    var txtColor = log.Severity switch
+                    {
+                        LogSeverity.Critical or LogSeverity.Exception or LogSeverity.Verbose or LogSeverity.Debug => "white",
+                        LogSeverity.Warning => "black",
+                        LogSeverity.Info => "color()",
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="@($"#collapse{log.Id}")" aria-expanded="false" aria-controls="@($"collapse{log.Id}")" style="background-color:@bgColor;color:@txtColor">
+                                <div class="container">
+                                    <div class="row align-items-start">
+                                        <div class="col">
+                                            @log.Time.ToLocalTime().DateTime.ToString(CultureInfo.CurrentCulture)
+                                        </div>
+                                        <div class="col">
+                                            @log.ShortSource
+                                        </div>
+                                        <div class="col">
+                                            @log.ShortMessage
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="@($"collapse{log.Id}")" class="accordion-button collapse" data-bs-parent="#logAccordion">
+                            <div class="accordion-body container">
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Localizer["Id"]
+                                    </div>
+                                    <div class="col">
+                                        @log.Id
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Localizer["Severity"]
+                                    </div>
+                                    <div class="col">
+                                        @log.Severity
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Localizer["Source"]
+                                    </div>
+                                    <div class="col">
+                                        @log.Source
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Localizer["Message"]
+                                    </div>
+                                    <div class="col">
+                                        @log.Message
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Localizer["Time"]
+                                    </div>
+                                    <div class="col">
+                                        @log.Time.ToLocalTime().DateTime.ToString(CultureInfo.CurrentCulture)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<LogMessage>? _logs;
+    private int _logCount = 50;
+    private DateTimeOffset _logTimeMin;
+    private DateTimeOffset _logTimeMax;
+    private int _severityNum = 3;
+
+    protected override void OnInitialized()
+    {
+        SetLogs();
+    }
+
+    private void SetLogs()
+    {
+        _logs = LogService.GetLogs(_logCount, _logTimeMin, _logTimeMax, (LogSeverity)_severityNum).ToList();
+
+        if (_logs == null || !_logs.Any()) return;
+    }
+}

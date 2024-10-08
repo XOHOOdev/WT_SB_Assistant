@@ -1,0 +1,41 @@
+services:
+  sparta-web-ui:
+    build:
+      dockerfile: Dockerfile.BlazorUI
+    container_name: sparta-web-ui
+    ports:
+      - "5001:80"
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+     - ASPNETCORE_HTTP_PORTS=80
+    depends_on:
+      - "sql"
+    restart: always
+  runner:
+    build: 
+      dockerfile: Dockerfile.Runner
+    container_name: sparta-runner
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - "sql"
+      - "sparta-web-ui"
+    restart: always
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    container_name: sparta-sql
+    user: root
+    ports:
+      - "1434:1433" 
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=A&VeryComplex123Password
+    volumes:
+      - "spartadata:/var/opt/mssql/data/"
+      - "spartalog:/var/opt/mssql/log/"
+      - "spartasecrets:/var/opt/mssql/secrets/"
+    restart: always
+volumes:
+  spartadata:
+  spartalog:
+  spartasecrets:

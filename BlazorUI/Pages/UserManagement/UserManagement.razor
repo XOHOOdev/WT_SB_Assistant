@@ -1,0 +1,50 @@
+﻿@page "/usermanagement"
+@using Sparta.BlazorUI.Authorization
+@using Sparta.BlazorUI.Data.UserManagementData
+@using Sparta.BlazorUI.Permissions
+
+@inject IStringLocalizer<UserManagement> Localizer
+@inject UserManagementService ManagementService
+@attribute [HasPermission(Permissions.UserManagement.View)]
+
+<PageTitle>@Localizer["UserManagement"]</PageTitle>
+
+<h3>@Localizer["UserManagement"]</h3>
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <button class="btn" type="button" @onclick="SetUsersSelected">@Localizer["Users"]</button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn" type="button" @onclick="SetRolesSelected">@Localizer["Roles"]</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+@if (usersSelected)
+{
+    <UserRoleManagement/>
+}
+else
+{
+    <RolePermissionManagement/>
+}
+
+@code {
+    private bool usersSelected = true;
+
+    private void SetUsersSelected()
+    {
+        usersSelected = true;
+    }
+
+    private void SetRolesSelected()
+    {
+        usersSelected = false;
+    }
+
+}
