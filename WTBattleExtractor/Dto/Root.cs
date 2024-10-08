@@ -10,7 +10,5 @@ namespace WTBattleExtractor.Dto
         [JsonProperty(PropertyName = "damage")]
         public List<Damage> Damage { get; set; } = [];
 
-        [JsonIgnore]
-        public DateTime Received { get; set; }
     }
 }

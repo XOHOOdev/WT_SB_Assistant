@@ -7,6 +7,7 @@ namespace WTBattleExtractor.APIs.WtLocal
     public class WtLocal
     {
         private readonly HttpClient? _client;
+        private readonly HttpClient? _watchClient;
         private int _lastMessage;
 
         public WtLocal()
@@ -14,6 +15,10 @@ namespace WTBattleExtractor.APIs.WtLocal
             if (ConfigurationManager.AppSettings["WtApi"] is { } url)
             {
                 _client = new HttpClient
+                {
+                    BaseAddress = new Uri(url)
+                };
+                _watchClient = new HttpClient
                 {
                     BaseAddress = new Uri(url)
                 };
@@ -34,8 +39,6 @@ namespace WTBattleExtractor.APIs.WtLocal
 
                     if (res == null) return null;
 
-                    res.Received = DateTime.Now;
-
                     if (res.Damage.LastOrDefault() is { } dmg)
                     {
                         _lastMessage = dmg.Id;
@@ -49,6 +52,25 @@ namespace WTBattleExtractor.APIs.WtLocal
             }
 
             return null;
+        }
+
+        public async Task<bool> MatchFinishedAsync()
+        {
+            if (_watchClient == null) return false;
+
+            try
+            {
+                using var response = await _watchClient.GetAsync("map_obj.json");
+                if (response.IsSuccessStatusCode)
+                {
+                    return string.IsNullOrWhiteSpace(await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
     }
 }
