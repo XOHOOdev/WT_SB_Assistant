@@ -167,19 +167,19 @@ internal class Program
         if (userManager == null) return;
 
 
-        if (await userManager.FindByNameAsync("admin@WtSbAssistant.de") == null)
+        if (await userManager.FindByNameAsync("admin@wtsba.de") == null)
         {
             var user = new IdentityUser
             {
-                Email = "admin@WtSbAssistant.de",
-                UserName = "admin@WtSbAssistant.de",
+                Email = "admin@wtsba.de",
+                UserName = "admin@wtsba.de",
                 EmailConfirmed = true
             };
 
             await userManager.CreateAsync(user, "Test1.");
         }
 
-        var adminUser = await userManager.FindByNameAsync("admin@WtSbAssistant.de");
+        var adminUser = await userManager.FindByNameAsync("admin@wtsba.de");
         if (adminUser == null) return;
 
         foreach (var role in Enum.GetValues(typeof(DefaultRoles)))
