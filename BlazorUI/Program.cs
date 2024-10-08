@@ -37,6 +37,7 @@ internal class Program
         builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext<IdentityUser, ApplicationRole, string>>();
+
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services
@@ -55,6 +56,7 @@ internal class Program
 
         builder.Services.AddScoped<WtSbAssistantLogger>();
         builder.Services.AddHttpClient();
+        builder.Services.AddControllers();
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -94,14 +96,15 @@ internal class Program
         app.UseHttpsRedirection();
 
         app.UseStaticFiles();
-
         app.UseRouting();
 
         app.UseAuthorization();
 
-        app.MapControllers();
-        app.MapBlazorHub();
-        app.MapFallbackToPage("/_Host");
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+        });
 
         app.Run();
     }

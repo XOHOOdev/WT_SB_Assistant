@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <ContainerRuntimeIdentifier>win-x64</ContainerRuntimeIdentifier>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809</ContainerBaseImage>
+    <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+    <UserSecretsId>f7eed971-7fe3-4557-9f39-be5a9abfe46d</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ContainerPort Include="8081" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+</Project>

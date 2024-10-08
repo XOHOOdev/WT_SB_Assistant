@@ -1,17 +1,18 @@
 ﻿using System.Text.RegularExpressions;
 using WTBattleExtractor.Dto;
+using WtSbAssistant.BlazorUI.Controllers.Dto;
 
-namespace WTBattleExtractor.Parser
+namespace WebAPI.Parser
 {
-    public static class DamageMessageParser
+    public static class WtLogParser
     {
-        public static DMO Parse(Damage message)
+        public static DMO ParseMessage(WtLogItem message)
         {
             try
             {
                 var action = new Regex(@"(destroyed)|(severely damaged)|(set afire)|(critically damaged)|(shot down)|(has crashed)|(has achieved)|(has delivered the first strike!)|(has disconnected from the game)|(kd\?NET_PLAYER_DISCONNECT_FROM_GAME)").Match(message.Msg).Value;
-                var firstPart = new Regex($@".*(?= {Regex.Escape(action)})").Match(message.Msg);
-                var secondPart = new Regex($@"(?<={Regex.Escape(action)} ).*").Match(message.Msg);
+                var firstPart = new Regex($@".*(?= {Regex.Escape(action)})").Match(message.Message);
+                var secondPart = new Regex($@"(?<={Regex.Escape(action)} ).*").Match(message.Message);
 
                 var vehicle2 = string.Empty;
                 var player2 = string.Empty;
@@ -47,14 +48,14 @@ namespace WTBattleExtractor.Parser
 
         }
 
-        public static List<DMO>? ParseMultiple(Root? root)
+        public static List<DMO>? ParseLog(WtLog? log)
         {
-            var lastDmg = root?.Damage.LastOrDefault();
+            var lastDmg = log?.Logs.LastOrDefault();
             var lastTime = lastDmg?.Time;
 
-            return root?.Damage.Select(m => new { DMO = Parse(m), m }).Select(d =>
+            return log?.Logs.Select(m => new { DMO = ParseMessage(m), m }).Select(d =>
             {
-                d.DMO.Time = root.Received.AddSeconds(d.m.Time - lastTime ?? 0);
+                d.DMO.Time = log.Time.AddSeconds(d.m.Time - lastTime ?? 0);
                 return d.DMO;
 
             }).ToList();

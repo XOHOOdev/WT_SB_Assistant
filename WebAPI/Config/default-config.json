@@ -1,0 +1,9 @@
+{
+  "DiscordBot": {
+    "DiscordToken": ""
+  },
+
+  "SendGrid": {
+    "SendGridKey": ""
+  },
+}

@@ -11,6 +11,18 @@ services:
     depends_on:
       - "wtsb-sql"
     restart: always
+  wtsb-web-api:
+    build:
+      dockerfile: Dockerfile.WebAPI
+    container_name: wtsb-web-api
+    ports:
+      - "5001:8080"
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+     - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - "wtsb-sql"
+    restart: always
   wtsb-sql:
     image: "mcr.microsoft.com/mssql/server:2019-latest"
     container_name: wtsb-sql
