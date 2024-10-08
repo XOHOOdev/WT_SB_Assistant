@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Data.ConfigurationData;
+﻿namespace WtSbAssistant.BlazorUI.Data.ConfigurationData;
 
 public class ConfigurationElement
 {

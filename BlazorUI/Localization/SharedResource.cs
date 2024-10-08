@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Localization;
+﻿namespace WtSbAssistant.BlazorUI.Localization;
 
 public class SharedResource
 {

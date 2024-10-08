@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Sparta.Core.DataAccess.DatabaseAccess;
-using Sparta.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-namespace Sparta.BlazorUI.Authorization;
+namespace WtSbAssistant.BlazorUI.Authorization;
 
 public class PermissionAuthorizationHandler(IServiceScopeFactory serviceScopeFactory)
     : AuthorizationHandler<PermissionRequirement>

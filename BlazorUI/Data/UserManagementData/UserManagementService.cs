@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Sparta.BlazorUI.Authorization;
-using Sparta.Core.DataAccess.DatabaseAccess;
-using Sparta.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.BlazorUI.Authorization;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-namespace Sparta.BlazorUI.Data.UserManagementData;
+namespace WtSbAssistant.BlazorUI.Data.UserManagementData;
 
 [HasPermission(Permissions.Permissions.UserManagement.View)]
 public class UserManagementService(ApplicationDbContext<IdentityUser, ApplicationRole, string> context)
@@ -44,12 +44,6 @@ public class UserManagementService(ApplicationDbContext<IdentityUser, Applicatio
         {
             ApplicationRole = role,
             RolePermissions = GetPermissions(typeof(Permissions.Permissions).GetNestedTypes(), role),
-            DiscordGuilds = context.DC_Guilds.Select(g => new DiscordGuildModel
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Selected = g.ApplicationRoles.Contains(role)
-            }).ToArray()
         };
     }
 
@@ -89,7 +83,6 @@ public class UserManagementService(ApplicationDbContext<IdentityUser, Applicatio
         var role = context.Roles.FirstOrDefault(x => x.Id == rolePermissionModel.ApplicationRole.Id);
         if (role == null) return;
         SavePermissions(rolePermissionModel.RolePermissions, role);
-        SaveGuilds(rolePermissionModel.DiscordGuilds, role);
         context.SaveChanges();
     }
 
@@ -117,24 +110,6 @@ public class UserManagementService(ApplicationDbContext<IdentityUser, Applicatio
                         if (permissionsToRemove != null) role.Permissions.Remove(permissionsToRemove);
                         break;
                     }
-            }
-        }
-    }
-
-    private void SaveGuilds(IList<DiscordGuildModel> guilds, ApplicationRole role)
-    {
-        foreach (var guild in guilds)
-        {
-            var roleHasGuild = role.DiscordGuilds.Any(g => g.Id == guild.Id);
-            switch (guild.Selected)
-            {
-                case true when !roleHasGuild:
-                    role.DiscordGuilds.Add(context.DC_Guilds.First(g => g.Id == guild.Id));
-                    break;
-                case false when roleHasGuild:
-                    var guildToRemove = role.DiscordGuilds.FirstOrDefault(g => g.Id == guild.Id);
-                    if (guildToRemove != null) role.DiscordGuilds.Remove(guildToRemove);
-                    break;
             }
         }
     }
@@ -168,28 +143,6 @@ public class UserManagementService(ApplicationDbContext<IdentityUser, Applicatio
             if (role.Selected)
                 context.UserRoles.Add(
                     new IdentityUserRole<string> { RoleId = role.Id, UserId = userRoleModel.User.Id });
-        context.SaveChanges();
-    }
-
-    public UserSteamId GetSteamId(IdentityUser user)
-    {
-        return new UserSteamId
-        {
-            User = user,
-            SteamId = context.US_SteamIds.FirstOrDefault(x => x.UserId == user.Id)?.SteamId ?? 0
-        };
-    }
-
-    public void SaveUserSteamId(UserSteamId userSteam)
-    {
-        var userSteamID = context.US_SteamIds.FirstOrDefault(x => x.UserId == userSteam.User.Id);
-        if (userSteamID == null)
-        {
-            userSteamID = new Sparta.Core.DataAccess.DatabaseAccess.Entities.UserSteamId { UserId = userSteam.User.Id };
-            context.US_SteamIds.Add(userSteamID);
-        }
-
-        userSteamID.SteamId = userSteam.SteamId;
         context.SaveChanges();
     }
 }

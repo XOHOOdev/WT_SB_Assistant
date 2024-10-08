@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace Sparta.BlazorUI.Authorization;
+namespace WtSbAssistant.BlazorUI.Authorization;
 
 public class PermissionAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options)
     : DefaultAuthorizationPolicyProvider(options)

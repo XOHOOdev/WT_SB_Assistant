@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account;
 
 [AllowAnonymous]
 public class ExternalLoginModel : PageModel

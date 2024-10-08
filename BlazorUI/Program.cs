@@ -3,21 +3,19 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Sparta.BlazorUI.Areas.Identity;
-using Sparta.BlazorUI.Authorization;
-using Sparta.BlazorUI.Data.ConfigurationData;
-using Sparta.BlazorUI.Data.LoggingData;
-using Sparta.BlazorUI.Data.ModulesData;
-using Sparta.BlazorUI.Data.ServerData;
-using Sparta.BlazorUI.Data.UserManagementData;
-using Sparta.BlazorUI.Permissions;
-using Sparta.BlazorUI.Services;
-using Sparta.Core.DataAccess.DatabaseAccess;
-using Sparta.Core.DataAccess.DatabaseAccess.Entities;
-using Sparta.Core.Helpers;
-using Sparta.Core.Logger;
+using WtSbAssistant.BlazorUI.Areas.Identity;
+using WtSbAssistant.BlazorUI.Authorization;
+using WtSbAssistant.BlazorUI.Data.ConfigurationData;
+using WtSbAssistant.BlazorUI.Data.LoggingData;
+using WtSbAssistant.BlazorUI.Data.UserManagementData;
+using WtSbAssistant.BlazorUI.Permissions;
+using WtSbAssistant.BlazorUI.Services;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.Core.Helpers;
+using WtSbAssistant.Core.Logger;
 
-namespace Sparta.BlazorUI;
+namespace WtSbAssistant.BlazorUI;
 
 internal class Program
 {
@@ -52,12 +50,10 @@ internal class Program
         builder.Services.AddSingleton<IPermissionService, PermissionService>();
         builder.Services.AddScoped<ConfigurationService>();
         builder.Services.AddScoped<UserManagementService>();
-        builder.Services.AddScoped<ModulesService>();
-        builder.Services.AddScoped<ServerService>();
         builder.Services.AddScoped<LoggingService>();
         builder.Services.AddScoped<ConfigHelper>();
 
-        builder.Services.AddScoped<SpartaLogger>();
+        builder.Services.AddScoped<WtSbAssistantLogger>();
         builder.Services.AddHttpClient();
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
@@ -171,19 +167,19 @@ internal class Program
         if (userManager == null) return;
 
 
-        if (await userManager.FindByNameAsync("admin@Sparta.de") == null)
+        if (await userManager.FindByNameAsync("admin@WtSbAssistant.de") == null)
         {
             var user = new IdentityUser
             {
-                Email = "admin@Sparta.de",
-                UserName = "admin@Sparta.de",
+                Email = "admin@WtSbAssistant.de",
+                UserName = "admin@WtSbAssistant.de",
                 EmailConfirmed = true
             };
 
             await userManager.CreateAsync(user, "Test1.");
         }
 
-        var adminUser = await userManager.FindByNameAsync("admin@Sparta.de");
+        var adminUser = await userManager.FindByNameAsync("admin@WtSbAssistant.de");
         if (adminUser == null) return;
 
         foreach (var role in Enum.GetValues(typeof(DefaultRoles)))

@@ -5,14 +5,10 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-BlazorUI-ffd8e62c-c06e-4133-8e45-0fde2be14819</UserSecretsId>
-		<RootNamespace>Sparta.BlazorUI</RootNamespace>
-		<StartupObject>Sparta.BlazorUI.Program</StartupObject>
+		<RootNamespace>WtSbAssistant.BlazorUI</RootNamespace>
+		<StartupObject>WtSbAssistant.BlazorUI.Program</StartupObject>
 		<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Content Remove="wwwroot\img\Sparta.svg" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="..\Config\appsettings.Development.json" Link="Config\appsettings.Development.json">
@@ -30,14 +26,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.12.0" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.64.0" />
+		<PackageReference Include="Azure.Identity" Version="1.12.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.65.0" />
 		<PackageReference Include="SendGrid" Version="9.29.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Core\Core.csproj" />
-		<ProjectReference Include="..\Modules\Modules.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,9 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="wwwroot\img\Sparta.svg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+	  <ProjectReference Include="..\Core\Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

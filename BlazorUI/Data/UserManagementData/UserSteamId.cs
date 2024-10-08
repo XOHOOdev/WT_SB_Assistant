@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Sparta.BlazorUI.Data.UserManagementData;
+namespace WtSbAssistant.BlazorUI.Data.UserManagementData;
 
 public class UserSteamId
 {

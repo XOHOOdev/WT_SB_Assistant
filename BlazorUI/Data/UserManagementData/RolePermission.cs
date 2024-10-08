@@ -1,6 +1,6 @@
-﻿using Sparta.Core.DataAccess.DatabaseAccess.Entities;
+﻿using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-namespace Sparta.BlazorUI.Data.UserManagementData;
+namespace WtSbAssistant.BlazorUI.Data.UserManagementData;
 
 public class RolePermission
 {

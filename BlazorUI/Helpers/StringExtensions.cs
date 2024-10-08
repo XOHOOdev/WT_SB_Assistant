@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Helpers;
+﻿namespace WtSbAssistant.BlazorUI.Helpers;
 
 public static class StringExtensions
 {

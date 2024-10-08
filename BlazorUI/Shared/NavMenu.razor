@@ -1,14 +1,14 @@
-﻿@using Sparta.BlazorUI.Authorization
-@using Sparta.BlazorUI.Localization
-@using Sparta.BlazorUI.Permissions
+﻿@using WtSbAssistant.BlazorUI.Authorization
+@using WtSbAssistant.BlazorUI.Localization
+@using WtSbAssistant.BlazorUI.Permissions
 @inject IStringLocalizer<SharedResource> Localizer
 
 @* <div class="top-row ps-3 navbar navbar-expand-md fixed-top"> *@
 <div class="navbar navbar-expand-md fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="">
-            <img src="/img/Sparta.svg" height="30" alt="Project SPARTA Logo" />
-            <span>Project Sparta</span>
+            <img src="/img/WtSbAssistant.svg" height="30" alt="Project WtSbAssistant Logo" />
+            <span>Project WtSbAssistant</span>
         </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
@@ -54,26 +54,6 @@
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="logging">
                         <span class="oi oi-justify-left" aria-hidden="true"></span> @Localizer["Logs"]
-                    </NavLink>
-                </div>
-            }
-        </AuthorizeView>
-        <AuthorizeView>
-            @if (context.User.Authorize(Permissions.Servers.View))
-            {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="server">
-                        <span class="oi oi-cloud" aria-hidden="true"></span> @Localizer["Servers"]
-                    </NavLink>
-                </div>
-            }
-        </AuthorizeView>
-        <AuthorizeView>
-            @if (context.User.Authorize(Permissions.Modules.View))
-            {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="modules">
-                        <span class="oi oi-code" aria-hidden="true"></span> @Localizer["Modules"]
                     </NavLink>
                 </div>
             }

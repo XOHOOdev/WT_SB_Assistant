@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Sparta.BlazorUI.Authorization;
-using Sparta.Core.DataAccess.DatabaseAccess;
-using Sparta.Core.DataAccess.DatabaseAccess.Entities;
-using Sparta.Core.Helpers;
+using WtSbAssistant.BlazorUI.Authorization;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.Core.Helpers;
 
-namespace Sparta.BlazorUI.Data.ConfigurationData;
+namespace WtSbAssistant.BlazorUI.Data.ConfigurationData;
 
 [HasPermission(Permissions.Permissions.Configuration.View)]
 public class ConfigurationService(ApplicationDbContext<IdentityUser, ApplicationRole, string> context, ConfigHelper config)

@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Authorization;
+﻿namespace WtSbAssistant.BlazorUI.Authorization;
 
 public interface IPermissionService
 {

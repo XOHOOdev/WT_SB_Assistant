@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Services;
+﻿namespace WtSbAssistant.BlazorUI.Services;
 
 public static class CacheService
 {

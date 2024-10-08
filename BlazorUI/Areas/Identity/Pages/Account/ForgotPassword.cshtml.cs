@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account;
 
 public class ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
     : PageModel

@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Permissions;
+﻿namespace WtSbAssistant.BlazorUI.Permissions;
 
 public class Permissions
 {
@@ -19,21 +19,5 @@ public class Permissions
     public class Logging
     {
         public const string View = "Logging.View";
-    }
-
-    public class Modules
-    {
-        public const string View = "Modules.View";
-        public const string Edit = "Modules.Edit";
-        public const string Delete = "Modules.Delete";
-        public const string Create = "Modules.Create";
-    }
-
-    public class Servers
-    {
-        public const string View = "Servers.View";
-        public const string Edit = "Servers.Edit";
-        public const string Delete = "Servers.Delete";
-        public const string Create = "Servers.Create";
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account;
 
 [AllowAnonymous]
 public class RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender) : PageModel

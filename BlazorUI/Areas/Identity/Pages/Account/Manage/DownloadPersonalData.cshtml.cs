@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account.Manage;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account.Manage;
 
 public class DownloadPersonalDataModel(
     UserManager<IdentityUser> userManager,

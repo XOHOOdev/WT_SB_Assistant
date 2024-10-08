@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account.Manage;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account.Manage;
 
 public class Disable2faModel(
     UserManager<IdentityUser> userManager,

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Sparta.Core.DataAccess.DatabaseAccess;
-using Sparta.Core.DataAccess.DatabaseAccess.Entities;
-using Sparta.Core.Logger;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess;
+using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.Core.Logger;
 
-namespace Sparta.BlazorUI.Data.LoggingData
+namespace WtSbAssistant.BlazorUI.Data.LoggingData
 {
     public class LoggingService(ApplicationDbContext<IdentityUser, ApplicationRole, string> context)
     {

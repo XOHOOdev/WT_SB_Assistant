@@ -13,7 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account;
 
 [AllowAnonymous]
 public class ResendEmailConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)

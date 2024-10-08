@@ -1,29 +1,19 @@
 services:
-  sparta-web-ui:
+  wtsb-web-ui:
     build:
       dockerfile: Dockerfile.BlazorUI
-    container_name: sparta-web-ui
+    container_name: wtsb-web-ui
     ports:
       - "5001:80"
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_HTTP_PORTS=80
     depends_on:
-      - "sql"
+      - "wtsb-sql"
     restart: always
-  runner:
-    build: 
-      dockerfile: Dockerfile.Runner
-    container_name: sparta-runner
-    environment:
-     - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - "sql"
-      - "sparta-web-ui"
-    restart: always
-  sql:
+  wtsb-sql:
     image: "mcr.microsoft.com/mssql/server:2019-latest"
-    container_name: sparta-sql
+    container_name: wtsb-sql
     user: root
     ports:
       - "1434:1433" 
@@ -31,11 +21,11 @@ services:
       - ACCEPT_EULA=y
       - SA_PASSWORD=A&VeryComplex123Password
     volumes:
-      - "spartadata:/var/opt/mssql/data/"
-      - "spartalog:/var/opt/mssql/log/"
-      - "spartasecrets:/var/opt/mssql/secrets/"
+      - "wtsbdata:/var/opt/mssql/data/"
+      - "wtsblog:/var/opt/mssql/log/"
+      - "wtsbsecrets:/var/opt/mssql/secrets/"
     restart: always
 volumes:
-  spartadata:
-  spartalog:
-  spartasecrets:
+  wtsbdata:
+  wtsblog:
+  wtsbsecrets:

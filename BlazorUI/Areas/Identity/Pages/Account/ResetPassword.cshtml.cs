@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account;
 
 public class ResetPasswordModel(UserManager<IdentityUser> userManager) : PageModel
 {

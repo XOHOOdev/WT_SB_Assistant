@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
-namespace Sparta.BlazorUI.Areas.Identity;
+namespace WtSbAssistant.BlazorUI.Areas.Identity;
 
 public class RevalidatingIdentityAuthenticationStateProvider<TUser>(
     ILoggerFactory loggerFactory,

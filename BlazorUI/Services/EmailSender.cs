@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Sparta.Core.Helpers;
+using WtSbAssistant.Core.Helpers;
 
-namespace Sparta.BlazorUI.Services;
+namespace WtSbAssistant.BlazorUI.Services;
 
 public class EmailSender(ILogger<EmailSender> logger, ConfigHelper config) : IEmailSender
 {
@@ -21,7 +21,7 @@ public class EmailSender(ILogger<EmailSender> logger, ConfigHelper config) : IEm
         var client = new SendGridClient(apiKey);
         var msg = new SendGridMessage
         {
-            From = new EmailAddress("Spartadcbot@gmail.com", "Sparta"),
+            From = new EmailAddress("WtSbAssistantdcbot@gmail.com", "WtSbAssistant"),
             Subject = subject,
             PlainTextContent = message,
             HtmlContent = message

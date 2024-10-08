@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace Sparta.BlazorUI.Authorization;
+namespace WtSbAssistant.BlazorUI.Authorization;
 
 public static class UserExtensions
 {

@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Sparta.BlazorUI.Areas.Identity.Pages.Account.Manage;
+namespace WtSbAssistant.BlazorUI.Areas.Identity.Pages.Account.Manage;
 
 public class EnableAuthenticatorModel(
     UserManager<IdentityUser> userManager,

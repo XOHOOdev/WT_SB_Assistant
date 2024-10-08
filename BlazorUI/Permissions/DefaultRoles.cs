@@ -1,4 +1,4 @@
-﻿namespace Sparta.BlazorUI.Permissions;
+﻿namespace WtSbAssistant.BlazorUI.Permissions;
 
 public enum DefaultRoles
 {

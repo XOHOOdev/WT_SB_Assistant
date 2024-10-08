@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Sparta.BlazorUI.Authorization
-@using Sparta.BlazorUI.Data.UserManagementData
-@using Sparta.BlazorUI.Permissions
+@using WtSbAssistant.BlazorUI.Authorization
+@using WtSbAssistant.BlazorUI.Data.UserManagementData
+@using WtSbAssistant.BlazorUI.Permissions
 @inject IStringLocalizer<UserManagement> Localizer
 @inject UserManagementService ManagementService
 @attribute [HasPermission(Permissions.UserManagement.View)]
@@ -39,7 +39,6 @@
                                     @if (context.User.Authorize(Permissions.UserManagement.Edit))
                                     {
                                         <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#manageRolesModal" @onclick='() => LoadUserRoles(user)'>@Localizer["ManageRoles"]</a>
-                                        <a style='margin-right:16px' class="dropdown-item" data-bs-toggle="modal" data-bs-target="#manageSteamIdModal" @onclick='() => LoadUserSteamId(user)'>@Localizer["ManageSteamId"]</a>
                                     }
                                 </AuthorizeView>
                             </div>
@@ -99,7 +98,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Abort"]</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="SaveUserSteamId">@Localizer["Save"]</button>
             </div>
         </div>
     </div>
@@ -131,15 +129,4 @@
     {
         ManagementService.SaveUserRoles(userRoles);
     }
-
-    private void LoadUserSteamId(IdentityUser user)
-    {
-        userSteamId = ManagementService.GetSteamId(user);
-    }
-
-    private void SaveUserSteamId()
-    {
-        ManagementService.SaveUserSteamId(userSteamId);
-    }
-
 }
