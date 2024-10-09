@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace WTBattleExtractor.Dto;
+namespace WTBattleExtractor.Dto.WtLocal;
 
 public class Damage
 {

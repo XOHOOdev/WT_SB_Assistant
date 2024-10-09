@@ -1,4 +1,4 @@
-﻿namespace WtSbAssistant.BlazorUI.Controllers.Dto
+﻿namespace WebAPI.Dto
 {
     public class WtLogItem
     {

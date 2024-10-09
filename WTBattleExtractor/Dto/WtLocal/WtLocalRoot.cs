@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace WTBattleExtractor.Dto
+namespace WTBattleExtractor.Dto.WtLocal
 {
-    public class Root
+    public class WtLocalRoot
     {
         [JsonProperty(PropertyName = "events")]
         public List<object> Events { get; set; } = [];
@@ -10,5 +10,7 @@ namespace WTBattleExtractor.Dto
         [JsonProperty(PropertyName = "damage")]
         public List<Damage> Damage { get; set; } = [];
 
+        [JsonIgnore]
+        public DateTime Time { get; set; }
     }
 }

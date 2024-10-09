@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using WebAPI.Dto;
 using WTBattleExtractor.Dto;
-using WtSbAssistant.BlazorUI.Controllers.Dto;
 
 namespace WebAPI.Parser
 {
@@ -10,7 +10,7 @@ namespace WebAPI.Parser
         {
             try
             {
-                var action = new Regex(@"(destroyed)|(severely damaged)|(set afire)|(critically damaged)|(shot down)|(has crashed)|(has achieved)|(has delivered the first strike!)|(has disconnected from the game)|(kd\?NET_PLAYER_DISCONNECT_FROM_GAME)").Match(message.Msg).Value;
+                var action = new Regex(@"(destroyed)|(severely damaged)|(set afire)|(critically damaged)|(shot down)|(has crashed)|(has achieved)|(has delivered the first strike!)|(has disconnected from the game)|(kd\?NET_PLAYER_DISCONNECT_FROM_GAME)").Match(message.Message).Value;
                 var firstPart = new Regex($@".*(?= {Regex.Escape(action)})").Match(message.Message);
                 var secondPart = new Regex($@"(?<={Regex.Escape(action)} ).*").Match(message.Message);
 
