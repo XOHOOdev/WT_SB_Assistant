@@ -48,14 +48,11 @@ namespace WebAPI.Parser
 
         }
 
-        public static List<DMO>? ParseLog(WtLog? log)
+        public static List<DMO> ParseLog(WtLog log)
         {
-            var lastDmg = log?.Logs.LastOrDefault();
-            var lastTime = lastDmg?.Time;
-
-            return log?.Logs.Select(m => new { DMO = ParseMessage(m), m }).Select(d =>
+            return log.Logs.Select(m => new { DMO = ParseMessage(m), m }).Select(d =>
             {
-                d.DMO.Time = log.Time.AddSeconds(d.m.Time - lastTime ?? 0);
+                d.DMO.Time = log.Time.AddSeconds(d.m.Time);
                 return d.DMO;
 
             }).ToList();

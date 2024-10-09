@@ -21,4 +21,27 @@ public class ApplicationDbContext<TUser, TRole, TKey>(
     public DbSet<Configuration> CF_Configurations { get; set; }
 
     public DbSet<LogMessage> LG_LogMessages { get; set; }
+
+    public DbSet<WtBattleRating> WT_BattleRatings { get; set; }
+
+    public DbSet<WtClan> WT_Clans { get; set; }
+
+    public DbSet<WtClanPlayer> WT_ClanPlayers { get; set; }
+
+    public DbSet<WtMatch> WT_Matches { get; set; }
+
+
+    public DbSet<WtClanMatch> WT_ClanMatch { get; set; }
+
+    public DbSet<WtNation> WT_Nations { get; set; }
+
+    public DbSet<WtPlayer> WT_Players { get; set; }
+
+    public DbSet<WtVehicle> WT_Vehicles { get; set; }
+
+    public DbSet<WtVehiclePlayerMatch> WT_VehiclePlayerMatches { get; set; }
+
+    public DbSet<WtVehicleRole> WT_VehicleRoles { get; set; }
+
+    public DbSet<WtVehicleType> WT_VehicleTypes { get; set; }
 }

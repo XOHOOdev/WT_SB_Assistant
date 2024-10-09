@@ -3,12 +3,14 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
 #nullable disable
 
-namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
+namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext<IdentityUser, ApplicationRole, string>))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -17,28 +19,13 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApplicationRoleDiscordGuild", b =>
-                {
-                    b.Property<string>("ApplicationRolesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("DiscordGuildsId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.HasKey("ApplicationRolesId", "DiscordGuildsId");
-
-                    b.HasIndex("DiscordGuildsId");
-
-                    b.ToTable("ApplicationRoleDiscordGuild");
-                });
 
             modelBuilder.Entity("ApplicationRolePermission", b =>
                 {
@@ -53,36 +40,6 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.HasIndex("RolesId");
 
                     b.ToTable("ApplicationRolePermission");
-                });
-
-            modelBuilder.Entity("DiscordGuildDiscordUser", b =>
-                {
-                    b.Property<decimal>("DiscordGuildsId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<decimal>("UsersId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.HasKey("DiscordGuildsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("DiscordGuildDiscordUser");
-                });
-
-            modelBuilder.Entity("DiscordRoleDiscordUser", b =>
-                {
-                    b.Property<decimal>("RolesId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<decimal>("UsersId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.HasKey("RolesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("DiscordRoleDiscordUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -260,7 +217,7 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -287,7 +244,7 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Configuration", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.Configuration", b =>
                 {
                     b.Property<string>("Class")
                         .HasColumnType("nvarchar(450)");
@@ -304,96 +261,7 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("CF_Configurations");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordChannel", b =>
-                {
-                    b.Property<decimal>("Id")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<decimal>("DiscordGuildId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DiscordGuildId");
-
-                    b.ToTable("DC_Channels");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", b =>
-                {
-                    b.Property<decimal>("Id")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DC_Guilds");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordReceivedMessage", b =>
-                {
-                    b.Property<decimal>("Id")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MessageType")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Reference")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<decimal>("UserId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DC_ReceivedMessages");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordRole", b =>
-                {
-                    b.Property<decimal>("Id")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<decimal>("GuildId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GuildId");
-
-                    b.ToTable("DC_Roles");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordUser", b =>
-                {
-                    b.Property<decimal>("Id")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DC_Users");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.LogMessage", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.LogMessage", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -430,80 +298,7 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("LG_LogMessages");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Module", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("ServerId")
-                        .HasColumnType("decimal(20,0)");
-
-                    b.Property<long>("TypeId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServerId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("MD_Modules");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.ModuleParameter", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ModuleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModuleId");
-
-                    b.ToTable("MD_Parameters");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.ModuleType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MD_ModuleType");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Permission", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.Permission", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -521,117 +316,236 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("US_Permissions");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Server", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleRating", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("UniqueId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(20,0)");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<decimal>("BattleRating")
+                        .HasColumnType("decimal(2,1)");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Until")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UniqueId");
+
+                    b.ToTable("WT_BattleRatings");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClan", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("UniqueId");
 
-                    b.Property<int>("Port")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SV_Servers");
+                    b.ToTable("WT_Clans");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.UserSteamId", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClanMatch", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ClanId")
+                        .HasColumnType("int");
 
-                    b.Property<long>("SteamId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
 
-                    b.HasKey("UserId");
+                    b.HasKey("ClanId", "MatchId");
 
-                    b.ToTable("US_SteamIds");
+                    b.HasIndex("MatchId");
+
+                    b.ToTable("WT_ClanMatch");
                 });
 
-            modelBuilder.Entity("ApplicationRoleDiscordGuild", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClanPlayer", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
-                        .WithMany()
-                        .HasForeignKey("ApplicationRolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("int");
 
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", null)
-                        .WithMany()
-                        .HasForeignKey("DiscordGuildsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("ClanId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastSeen")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("PlayerId", "ClanId");
+
+                    b.HasIndex("ClanId");
+
+                    b.ToTable("WT_ClanPlayers");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<int>("BattleRatingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("MatchStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("int");
+
+                    b.HasKey("UniqueId");
+
+                    b.HasIndex("BattleRatingId");
+
+                    b.ToTable("WT_Matches");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtNation", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UniqueId");
+
+                    b.ToTable("WT_Nations");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UniqueId");
+
+                    b.ToTable("WT_Players");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<int>("NationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UniqueId");
+
+                    b.HasIndex("NationId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("WT_Vehicles");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehiclePlayerMatch", b =>
+                {
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VehicleId", "PlayerId", "MatchId");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("WT_VehiclePlayerMatches");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleRole", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UniqueId");
+
+                    b.ToTable("WT_VehicleRoles");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleType", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UniqueId");
+
+                    b.ToTable("WT_VehicleTypes");
                 });
 
             modelBuilder.Entity("ApplicationRolePermission", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.Permission", null)
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.Permission", null)
                         .WithMany()
                         .HasForeignKey("PermissionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DiscordGuildDiscordUser", b =>
-                {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", null)
-                        .WithMany()
-                        .HasForeignKey("DiscordGuildsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DiscordRoleDiscordUser", b =>
-                {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordRole", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -658,7 +572,7 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -680,74 +594,153 @@ namespace Sparta.Core.DataAccess.DatabaseAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordChannel", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClanMatch", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", "DiscordGuild")
-                        .WithMany("Channels")
-                        .HasForeignKey("DiscordGuildId")
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClan", "Clan")
+                        .WithMany("WtClanMatch")
+                        .HasForeignKey("ClanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiscordGuild");
-                });
-
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordRole", b =>
-                {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", "Guild")
-                        .WithMany("Roles")
-                        .HasForeignKey("GuildId")
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", "Match")
+                        .WithMany("WtClanMatch")
+                        .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Guild");
+                    b.Navigation("Clan");
+
+                    b.Navigation("Match");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Module", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClanPlayer", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.Server", null)
-                        .WithMany("Modules")
-                        .HasForeignKey("ServerId");
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClan", "Clan")
+                        .WithMany("WtClanPlayers")
+                        .HasForeignKey("ClanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.ModuleType", "Type")
-                        .WithMany("Modules")
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", "Player")
+                        .WithMany("WtClanPlayers")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clan");
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", b =>
+                {
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleRating", "BattleRating")
+                        .WithMany("WtMatches")
+                        .HasForeignKey("BattleRatingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BattleRating");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", b =>
+                {
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtNation", "Nation")
+                        .WithMany("WtVehicles")
+                        .HasForeignKey("NationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleRole", "Role")
+                        .WithMany("WtVehicles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleType", "Type")
+                        .WithMany("WtVehicles")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Nation");
+
+                    b.Navigation("Role");
+
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.ModuleParameter", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehiclePlayerMatch", b =>
                 {
-                    b.HasOne("Sparta.Core.DataAccess.DatabaseAccess.Entities.Module", "Module")
-                        .WithMany("Parameters")
-                        .HasForeignKey("ModuleId")
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", "Match")
+                        .WithMany("WtVehiclePlayerMatches")
+                        .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Module");
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", "Player")
+                        .WithMany("WtVehiclePlayerMatches")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", "Vehicle")
+                        .WithMany("WtVehiclePlayerMatches")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.DiscordGuild", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleRating", b =>
                 {
-                    b.Navigation("Channels");
-
-                    b.Navigation("Roles");
+                    b.Navigation("WtMatches");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Module", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClan", b =>
                 {
-                    b.Navigation("Parameters");
+                    b.Navigation("WtClanMatch");
+
+                    b.Navigation("WtClanPlayers");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.ModuleType", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", b =>
                 {
-                    b.Navigation("Modules");
+                    b.Navigation("WtClanMatch");
+
+                    b.Navigation("WtVehiclePlayerMatches");
                 });
 
-            modelBuilder.Entity("Sparta.Core.DataAccess.DatabaseAccess.Entities.Server", b =>
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtNation", b =>
                 {
-                    b.Navigation("Modules");
+                    b.Navigation("WtVehicles");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", b =>
+                {
+                    b.Navigation("WtClanPlayers");
+
+                    b.Navigation("WtVehiclePlayerMatches");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", b =>
+                {
+                    b.Navigation("WtVehiclePlayerMatches");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleRole", b =>
+                {
+                    b.Navigation("WtVehicles");
+                });
+
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleType", b =>
+                {
+                    b.Navigation("WtVehicles");
                 });
 #pragma warning restore 612, 618
         }
