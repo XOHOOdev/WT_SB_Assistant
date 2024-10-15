@@ -157,4 +157,7 @@
   <data name="Logging" xml:space="preserve">
     <value>Logs</value>
   </data>
+  <data name="WtDataManagement" xml:space="preserve">
+    <value>War Thunder Data</value>
+  </data>
 </root>

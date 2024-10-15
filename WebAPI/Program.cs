@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using WebAPI.DataAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 using WtSbAssistant.Core.Helpers;
+using WtSbAssistant.Core.Logger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,9 @@ builder.Services.AddSwaggerGen(options =>
         Description = "An ASP.NET Core Web API for extracting information for WarThunder Simulator Battles",
     });
 });
+
+builder.Services.AddScoped<WtSbAssistantLogger>();
+builder.Services.AddScoped<DatabaseManager>();
 
 var app = builder.Build();
 

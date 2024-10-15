@@ -74,7 +74,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     ShortSource = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShortMessage = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,7 +115,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +128,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,7 +141,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,7 +154,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,7 +167,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -312,6 +312,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BattleRatingId = table.Column<int>(type: "int", nullable: false),
                     MatchStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MatchEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Result = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -356,6 +357,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NationId = table.Column<int>(type: "int", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     TypeId = table.Column<int>(type: "int", nullable: false)
@@ -413,7 +415,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     VehicleId = table.Column<int>(type: "int", nullable: false),
                     PlayerId = table.Column<int>(type: "int", nullable: false),
-                    MatchId = table.Column<int>(type: "int", nullable: false)
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    Kills = table.Column<int>(type: "int", nullable: false),
+                    Deaths = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -493,9 +497,27 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 column: "ClanId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WT_Clans_Name",
+                table: "WT_Clans",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WT_Matches_BattleRatingId",
                 table: "WT_Matches",
                 column: "BattleRatingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_Nations_Name",
+                table: "WT_Nations",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_Players_Name",
+                table: "WT_Players",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_WT_VehiclePlayerMatches_MatchId",
@@ -506,6 +528,18 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "IX_WT_VehiclePlayerMatches_PlayerId",
                 table: "WT_VehiclePlayerMatches",
                 column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_VehicleRoles_Name",
+                table: "WT_VehicleRoles",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_Vehicles_Name",
+                table: "WT_Vehicles",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_WT_Vehicles_NationId",
@@ -521,6 +555,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "IX_WT_Vehicles_TypeId",
                 table: "WT_Vehicles",
                 column: "TypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_VehicleTypes_Name",
+                table: "WT_VehicleTypes",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -1,6 +1,6 @@
-﻿using WtSbAssistant.Core.Logger;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WtSbAssistant.Core.Logger;
 
 namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities
 {
@@ -22,6 +22,6 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities
 
         [StringLength(30)] public string ShortMessage { get; set; } = null!;
 
-        public DateTimeOffset Time { get; set; }
+        public DateTime Time { get; set; }
     }
 }

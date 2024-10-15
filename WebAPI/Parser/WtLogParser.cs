@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
-using WebAPI.Dto;
 using WTBattleExtractor.Dto;
+using WtSbAssistant.Core.Dto;
 
 namespace WebAPI.Parser
 {
@@ -31,11 +31,16 @@ namespace WebAPI.Parser
                 var vehicle1 = new Regex(@"(?=\().*(?<=\))$").Match(firstPart.Value).Value;
                 var player1 = new Regex($@".*(?= \({vehicle1}\))").Match(firstPart.Value).Value;
 
+                var player1Split = player1.Split(' ');
+                var player2Split = player2.Split(' ');
+
                 return new DMO
                 {
                     Action = action,
-                    Player1 = player1,
-                    Player2 = player2,
+                    Clan1 = player1Split[0],
+                    Player1 = player1Split.Length > 1 ? player1Split[1] : "",
+                    Clan2 = player2Split[0],
+                    Player2 = player2Split.Length > 1 ? player2Split[1] : "",
                     Vehicle1 = vehicle1,
                     Vehicle2 = vehicle2,
                 };

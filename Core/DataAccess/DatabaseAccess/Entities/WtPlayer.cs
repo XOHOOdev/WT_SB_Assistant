@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-public partial class WtPlayer
+[Index(nameof(Name), IsUnique = true)]
+public class WtPlayer
 {
     [Key]
     public int UniqueId { get; set; }
@@ -12,4 +14,14 @@ public partial class WtPlayer
     public virtual ICollection<WtClanPlayer> WtClanPlayers { get; set; } = new List<WtClanPlayer>();
 
     public virtual ICollection<WtVehiclePlayerMatch> WtVehiclePlayerMatches { get; set; } = new List<WtVehiclePlayerMatch>();
+
+    public override bool Equals(object? obj)
+    {
+        return obj is WtPlayer player && Name.Equals(player.Name);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name);
+    }
 }

@@ -2,9 +2,13 @@
 {
     public class DMO
     {
+        public string Clan1 { get; set; } = null!;
+
         public string Player1 { get; set; } = null!;
 
         public string Vehicle1 { get; set; } = null!;
+
+        public string Clan2 { get; set; } = null!;
 
         public string Player2 { get; set; } = null!;
 

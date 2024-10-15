@@ -6,4 +6,8 @@
   "SendGrid": {
     "SendGridKey": ""
   },
+
+  "WebAPI": {
+    "Address": "http://wtsb-web-api:8080"
+  }
 }

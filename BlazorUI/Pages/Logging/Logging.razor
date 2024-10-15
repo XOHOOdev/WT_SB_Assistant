@@ -73,7 +73,7 @@ else
                                 <div class="container">
                                     <div class="row align-items-start">
                                         <div class="col">
-                                            @log.Time.ToLocalTime().DateTime.ToString(CultureInfo.CurrentCulture)
+                                            @log.Time.ToString(CultureInfo.CurrentCulture)
                                         </div>
                                         <div class="col">
                                             @log.ShortSource
@@ -124,7 +124,7 @@ else
                                         @Localizer["Time"]
                                     </div>
                                     <div class="col">
-                                        @log.Time.ToLocalTime().DateTime.ToString(CultureInfo.CurrentCulture)
+                                        @log.Time.ToString(CultureInfo.CurrentCulture)
                                     </div>
                                 </div>
                             </div>
@@ -139,8 +139,8 @@ else
 @code {
     private IEnumerable<LogMessage>? _logs;
     private int _logCount = 50;
-    private DateTimeOffset _logTimeMin;
-    private DateTimeOffset _logTimeMax;
+    private DateTime _logTimeMin;
+    private DateTime _logTimeMax;
     private int _severityNum = 3;
 
     protected override void OnInitialized()

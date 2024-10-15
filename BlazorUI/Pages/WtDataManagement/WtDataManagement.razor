@@ -1,0 +1,19 @@
+﻿@page "/wtdatamanagement"
+@using WtSbAssistant.BlazorUI.Authorization
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData
+@using WtSbAssistant.BlazorUI.Permissions
+
+@inject WtDataManagementService WtService
+@inject IStringLocalizer<WtDataManagement> Localizer
+@inject IJSRuntime Js
+@attribute [HasPermission(Permissions.WtDataManagement.View)]
+
+<InputFile OnChange="UploadFileAsync"></InputFile>
+
+@code {
+
+    private async Task UploadFileAsync(InputFileChangeEventArgs e)
+    {
+        await WtService.UploadFileAsync(e.File);
+    }
+}

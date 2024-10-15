@@ -290,8 +290,8 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("Time")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -348,9 +348,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("WT_Clans");
                 });
@@ -399,6 +402,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.Property<int>("BattleRatingId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("MatchEnd")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("MatchStart")
                         .HasColumnType("datetime2");
 
@@ -422,9 +428,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("WT_Nations");
                 });
@@ -439,9 +448,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("WT_Players");
                 });
@@ -454,6 +466,10 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("NationId")
                         .HasColumnType("int");
 
@@ -464,6 +480,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("NationId");
 
@@ -485,6 +504,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Deaths")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Kills")
+                        .HasColumnType("int");
+
                     b.HasKey("VehicleId", "PlayerId", "MatchId");
 
                     b.HasIndex("MatchId");
@@ -504,9 +529,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("WT_VehicleRoles");
                 });
@@ -521,9 +549,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UniqueId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("WT_VehicleTypes");
                 });

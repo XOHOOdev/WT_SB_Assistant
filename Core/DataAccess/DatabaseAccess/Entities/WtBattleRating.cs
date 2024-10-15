@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-public partial class WtBattleRating
+public class WtBattleRating
 {
     [Key]
     public int UniqueId { get; set; }
@@ -16,4 +16,17 @@ public partial class WtBattleRating
     public DateTime Until { get; set; }
 
     public virtual ICollection<WtMatch> WtMatches { get; set; } = new List<WtMatch>();
+
+    public override bool Equals(object? obj)
+    {
+        return obj is WtBattleRating battleRating &&
+               battleRating.BattleRating.Equals(BattleRating) &&
+               battleRating.From.Equals(From) &&
+               battleRating.Until.Equals(Until);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(BattleRating, From, Until);
+    }
 }

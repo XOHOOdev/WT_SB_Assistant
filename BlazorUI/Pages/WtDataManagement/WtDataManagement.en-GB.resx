@@ -117,67 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Stats" xml:space="preserve">
-    <value>Your Stats</value>
-  </data>
-  <data name="UserManagement" xml:space="preserve">
-    <value>User Management</value>
-  </data>
-  <data name="HLL" xml:space="preserve">
-    <value>Hell Let Loose</value>
-  </data>
-  <data name="ToggleTheme" xml:space="preserve">
-    <value>Toggle theme</value>
-  </data>
-  <data name="Dark" xml:space="preserve">
-    <value>Dark</value>
-  </data>
-  <data name="Light" xml:space="preserve">
-    <value>Light</value>
-  </data>
-  <data name="Auto" xml:space="preserve">
-    <value>Auto</value>
-  </data>
-  <data name="ToggleLanguage" xml:space="preserve">
-    <value>Toggle language</value>
-  </data>
-  <data name="EnglishUS" xml:space="preserve">
-    <value>English (US)</value>
-  </data>
-  <data name="EnglishGB" xml:space="preserve">
-    <value>English (GB)</value>
-  </data>
-  <data name="German" xml:space="preserve">
-    <value>German</value>
-  </data>
-  <data name="HelloString" xml:space="preserve">
-    <value>Hello {0}!</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>Login</value>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Register</value>
-  </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Logout</value>
-  </data>
-  <data name="Config" xml:space="preserve">
-    <value>Configuration</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Modules" xml:space="preserve">
-    <value>Modules</value>
-  </data>
-  <data name="Servers" xml:space="preserve">
-    <value>Server</value>
-  </data>
-  <data name="Logging" xml:space="preserve">
+  <data name="Logs" xml:space="preserve">
     <value>Logs</value>
   </data>
-  <data name="WtDataManagement" xml:space="preserve">
-    <value>War Thunder Data</value>
+  <data name="Range" xml:space="preserve">
+    <value>Range</value>
+  </data>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>Exception</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Verbose" xml:space="preserve">
+    <value>Verbose</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
   </data>
 </root>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
-using System.Diagnostics;
 
 namespace WtSbAssistant.Core.Logger
 {
@@ -43,7 +43,7 @@ namespace WtSbAssistant.Core.Logger
                 ShortMessage = truncatedMessage,
                 Source = $"{frame?.GetMethod()?.DeclaringType?.FullName}.{frame?.GetMethod()?.Name}",
                 ShortSource = truncatedSource,
-                Time = DateTimeOffset.Now,
+                Time = DateTime.Now,
                 Severity = severity
             });
             context.SaveChanges();

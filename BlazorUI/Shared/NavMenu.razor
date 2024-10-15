@@ -58,6 +58,16 @@
                 </div>
             }
         </AuthorizeView>
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.WtDataManagement.View))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="wtdatamanagement">
+                        <span class="oi oi-justify-left" aria-hidden="true"></span> @Localizer["WtDataManagement"]
+                    </NavLink>
+                </div>
+            }
+        </AuthorizeView>
     </div>
 </div>
 

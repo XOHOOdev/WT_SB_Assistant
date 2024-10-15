@@ -8,6 +8,7 @@ using WtSbAssistant.BlazorUI.Authorization;
 using WtSbAssistant.BlazorUI.Data.ConfigurationData;
 using WtSbAssistant.BlazorUI.Data.LoggingData;
 using WtSbAssistant.BlazorUI.Data.UserManagementData;
+using WtSbAssistant.BlazorUI.Data.WtDataManagementData;
 using WtSbAssistant.BlazorUI.Permissions;
 using WtSbAssistant.BlazorUI.Services;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
@@ -52,11 +53,11 @@ internal class Program
         builder.Services.AddScoped<ConfigurationService>();
         builder.Services.AddScoped<UserManagementService>();
         builder.Services.AddScoped<LoggingService>();
+        builder.Services.AddScoped<WtDataManagementService>();
         builder.Services.AddScoped<ConfigHelper>();
 
         builder.Services.AddScoped<WtSbAssistantLogger>();
         builder.Services.AddHttpClient();
-        builder.Services.AddControllers();
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -100,11 +101,9 @@ internal class Program
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapBlazorHub();
-            endpoints.MapFallbackToPage("/_Host");
-        });
+        app.MapControllers();
+        app.MapBlazorHub();
+        app.MapFallbackToPage("/_Host");
 
         app.Run();
     }

@@ -57,13 +57,9 @@ internal class Program
                 _log.Time = res.Time;
             }
 
-            if (_sendLogs && _log.Logs.Count > 0)
-            {
-                await SendLogs();
-                _log = new WtLog();
-            }
-
-            Thread.Sleep(5000);
+            if (!_sendLogs || _log.Logs.Count <= 0) continue;
+            await SendLogs();
+            _log = new WtLog();
         }
     }
 

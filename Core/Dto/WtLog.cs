@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Dto
+﻿namespace WtSbAssistant.Core.Dto
 {
     public class WtLog
     {

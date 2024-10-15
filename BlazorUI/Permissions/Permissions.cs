@@ -20,4 +20,10 @@ public class Permissions
     {
         public const string View = "Logging.View";
     }
+
+    public class WtDataManagement
+    {
+        public const string View = "WtDataManagement.View";
+        public const string Create = "WtDataManagement.Create";
+    }
 }
