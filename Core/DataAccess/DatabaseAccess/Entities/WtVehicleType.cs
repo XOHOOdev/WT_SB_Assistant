@@ -11,7 +11,7 @@ public class WtVehicleType
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<WtVehicle> WtVehicles { get; set; } = new List<WtVehicle>();
+    public virtual ICollection<WtVehicleVehicleType> VehicleTypes { get; set; } = new List<WtVehicleVehicleType>();
 
     public override bool Equals(object? obj)
     {

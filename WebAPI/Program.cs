@@ -36,6 +36,8 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<WtSbAssistantLogger>();
 builder.Services.AddScoped<DatabaseManager>();
+builder.Services.AddScoped<VehicleDataManager>();
+builder.Services.AddScoped<ConfigHelper>();
 
 var app = builder.Build();
 

@@ -13,15 +13,13 @@ public class WtVehicle
 
     public int NationId { get; set; }
 
-    public int RoleId { get; set; }
-
-    public int TypeId { get; set; }
+    public int BattleRatingId { get; set; }
 
     public virtual WtNation Nation { get; set; } = null!;
 
-    public virtual WtVehicleRole Role { get; set; } = null!;
+    public virtual WtVehicleBattleRating BattleRating { get; set; } = null!;
 
-    public virtual WtVehicleType Type { get; set; } = null!;
+    public virtual ICollection<WtVehicleVehicleType> VehicleTypes { get; set; } = null!;
 
     public virtual ICollection<WtVehiclePlayerMatch> WtVehiclePlayerMatches { get; set; } = new List<WtVehiclePlayerMatch>();
 

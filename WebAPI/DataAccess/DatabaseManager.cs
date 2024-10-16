@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WebAPI.Dto;
 using WTBattleExtractor.Dto;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
@@ -19,7 +21,91 @@ namespace WebAPI.DataAccess
 
             if (match == null) return; //TODO return failure code if match already exists
 
+            await CreateVehiclesAsync(dmos);
+
             await ConnectPlayerClanMatchAsync(match, basicInsertResult.Item1, basicInsertResult.Item2);
+        }
+
+        public async Task<int> UpdateVehiclesAsync(List<ApiVehicle> vehicles)
+        {
+            await context.WT_Vehicles.ExecuteDeleteAsync();
+            await context.WT_VehicleVehicleTypes.ExecuteDeleteAsync();
+
+            var battleRatings = context.WT_VehicleBattleRatings
+                .BulkInsert(
+                    vehicles
+                        .Select(v => new WtVehicleBattleRating()
+                        {
+                            BattleRating = (decimal)v.RealisticGroundBr
+                        })
+                        .Distinct()
+                        .ToList()
+                    );
+
+            var vehicleTypes = context.WT_VehicleTypes
+                .BulkInsert(
+                    vehicles
+                        .SelectMany(v => v.VehicleSubTypes.Concat(new[] { v.VehicleType }))
+                        .Distinct()
+                        .Select(vt =>
+                            new WtVehicleType
+                            {
+                                Name = vt
+                            })
+                        .ToList()
+                    );
+
+            var nations = context.WT_Nations
+                .BulkInsert(
+                    vehicles.Select(v => new WtNation
+                    {
+                        Name = v.Country
+                    })
+                    .Distinct()
+                    .ToList());
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return 0;
+            }
+
+            var dbVehicles = vehicles.Select(v => new WtVehicle
+            {
+                Name = v.Identifier,
+                Nation = nations.First(n => n.Name == v.Country),
+                BattleRating = battleRatings.First(b => b.BattleRating == (decimal)v.RealisticGroundBr)
+            }).ToList();
+
+            context.WT_Vehicles.AddRange(dbVehicles);
+
+            context.WT_VehicleVehicleTypes.AddRange(vehicles
+                .Select(v => v.VehicleSubTypes
+                    .Concat(new[] { v.VehicleType })
+                    .Select(
+                        vt => new WtVehicleVehicleType
+                        {
+                            Vehicle = dbVehicles.First(dv => dv.Name == v.Identifier),
+                            VehicleType = vehicleTypes.First(t => t.Name == vt)
+                        })
+                )
+                .SelectMany(vvt => vvt)
+                .ToList());
+
+            try
+            {
+                await context.SaveChangesAsync();
+                return vehicles.Count;
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return 0;
+            }
         }
 
         private async Task<Tuple<List<WtPlayer>, List<WtClan>>> InsertBasicDataAsync(List<DMO> dmos)
@@ -92,7 +178,9 @@ namespace WebAPI.DataAccess
                 MatchStart = starTime,
                 MatchEnd = dmos.Last().Time,
             };
-            if (context.WT_Matches.Contains(newMatch))
+
+            var matches = context.WT_Matches.ToList();
+            if (matches.Contains(newMatch))
             {
                 return null;
             }
@@ -111,9 +199,34 @@ namespace WebAPI.DataAccess
             }
         }
 
+        private async Task CreateVehiclesAsync(List<DMO> dmos)
+        {
+            var vehicles = dmos.SelectMany(d => new[] { d.Vehicle1, d.Vehicle2 })
+                .Distinct()
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Select(v => new Vehicle { RawName = v })
+                .ToList();
+        }
+
         private async Task<bool> ConnectPlayerClanMatchAsync(WtMatch match, List<WtPlayer> players, List<WtClan> clans)
         {
-            return false;
+            context.WT_ClanMatch.BulkInsert(
+                clans.Select(c => new WtClanMatch
+                {
+                    ClanId = c.UniqueId,
+                    MatchId = match.UniqueId
+                }).ToList());
+
+            try
+            {
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return false;
+            }
         }
     }
 }

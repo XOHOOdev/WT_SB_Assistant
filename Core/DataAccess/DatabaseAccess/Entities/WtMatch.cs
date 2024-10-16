@@ -24,8 +24,8 @@ public class WtMatch
     public override bool Equals(object? obj)
     {
         return obj is WtMatch match &&
-               match.BattleRating == BattleRating &&
-               (Equals(MatchStart >= match.MatchStart && MatchStart <= match.MatchEnd) ||
+               match.BattleRatingId == BattleRatingId &&
+               ((MatchStart >= match.MatchStart && MatchStart <= match.MatchEnd) ||
                 (match.MatchStart >= MatchStart && match.MatchStart <= MatchEnd));
     }
 

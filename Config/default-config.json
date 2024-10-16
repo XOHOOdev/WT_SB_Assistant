@@ -9,5 +9,9 @@
 
   "WebAPI": {
     "Address": "http://wtsb-web-api:8080"
+  },
+
+  "VehicleApi": {
+    "BaseUrl": "https://www.wtvehiclesapi.sgambe.serv00.net/api/"
   }
 }

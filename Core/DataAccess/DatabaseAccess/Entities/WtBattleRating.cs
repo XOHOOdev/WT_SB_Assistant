@@ -8,7 +8,7 @@ public class WtBattleRating
     [Key]
     public int UniqueId { get; set; }
 
-    [Column(TypeName = "decimal(2,1)")]
+    [Column(TypeName = "decimal(3,1)")]
     public decimal BattleRating { get; set; }
 
     public DateTime From { get; set; }

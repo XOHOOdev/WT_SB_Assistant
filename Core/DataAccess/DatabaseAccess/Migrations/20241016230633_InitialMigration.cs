@@ -100,7 +100,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BattleRating = table.Column<decimal>(type: "decimal(2,1)", nullable: false),
+                    BattleRating = table.Column<decimal>(type: "decimal(3,1)", nullable: false),
                     From = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Until = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -149,16 +149,16 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WT_VehicleRoles",
+                name: "WT_VehicleBattleRatings",
                 columns: table => new
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    BattleRating = table.Column<decimal>(type: "decimal(3,1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WT_VehicleRoles", x => x.UniqueId);
+                    table.PrimaryKey("PK_WT_VehicleBattleRatings", x => x.UniqueId);
                 });
 
             migrationBuilder.CreateTable(
@@ -359,8 +359,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NationId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    TypeId = table.Column<int>(type: "int", nullable: false)
+                    BattleRatingId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -372,15 +371,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         principalColumn: "UniqueId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WT_Vehicles_WT_VehicleRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "WT_VehicleRoles",
-                        principalColumn: "UniqueId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_WT_Vehicles_WT_VehicleTypes_TypeId",
-                        column: x => x.TypeId,
-                        principalTable: "WT_VehicleTypes",
+                        name: "FK_WT_Vehicles_WT_VehicleBattleRatings_BattleRatingId",
+                        column: x => x.BattleRatingId,
+                        principalTable: "WT_VehicleBattleRatings",
                         principalColumn: "UniqueId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -436,6 +429,30 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WT_VehiclePlayerMatches_WT_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "WT_Vehicles",
+                        principalColumn: "UniqueId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WT_VehicleVehicleTypes",
+                columns: table => new
+                {
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    VehicleTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WT_VehicleVehicleTypes", x => new { x.VehicleId, x.VehicleTypeId });
+                    table.ForeignKey(
+                        name: "FK_WT_VehicleVehicleTypes_WT_VehicleTypes_VehicleTypeId",
+                        column: x => x.VehicleTypeId,
+                        principalTable: "WT_VehicleTypes",
+                        principalColumn: "UniqueId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WT_VehicleVehicleTypes_WT_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "WT_Vehicles",
                         principalColumn: "UniqueId",
@@ -520,6 +537,12 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_WT_VehicleBattleRatings_BattleRating",
+                table: "WT_VehicleBattleRatings",
+                column: "BattleRating",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WT_VehiclePlayerMatches_MatchId",
                 table: "WT_VehiclePlayerMatches",
                 column: "MatchId");
@@ -530,10 +553,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 column: "PlayerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WT_VehicleRoles_Name",
-                table: "WT_VehicleRoles",
-                column: "Name",
-                unique: true);
+                name: "IX_WT_Vehicles_BattleRatingId",
+                table: "WT_Vehicles",
+                column: "BattleRatingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WT_Vehicles_Name",
@@ -547,20 +569,15 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 column: "NationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WT_Vehicles_RoleId",
-                table: "WT_Vehicles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WT_Vehicles_TypeId",
-                table: "WT_Vehicles",
-                column: "TypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WT_VehicleTypes_Name",
                 table: "WT_VehicleTypes",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_VehicleVehicleTypes_VehicleTypeId",
+                table: "WT_VehicleVehicleTypes",
+                column: "VehicleTypeId");
         }
 
         /// <inheritdoc />
@@ -600,6 +617,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "WT_VehiclePlayerMatches");
 
             migrationBuilder.DropTable(
+                name: "WT_VehicleVehicleTypes");
+
+            migrationBuilder.DropTable(
                 name: "US_Permissions");
 
             migrationBuilder.DropTable(
@@ -618,6 +638,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "WT_Players");
 
             migrationBuilder.DropTable(
+                name: "WT_VehicleTypes");
+
+            migrationBuilder.DropTable(
                 name: "WT_Vehicles");
 
             migrationBuilder.DropTable(
@@ -627,10 +650,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "WT_Nations");
 
             migrationBuilder.DropTable(
-                name: "WT_VehicleRoles");
-
-            migrationBuilder.DropTable(
-                name: "WT_VehicleTypes");
+                name: "WT_VehicleBattleRatings");
         }
     }
 }
