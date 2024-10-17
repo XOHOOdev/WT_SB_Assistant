@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Dto;
+using WebAPI.Parser;
 using WTBattleExtractor.Dto;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
+using WtSbAssistant.Core.Dto;
 using WtSbAssistant.Core.Helpers;
 using WtSbAssistant.Core.Logger;
 
@@ -11,22 +13,22 @@ namespace WebAPI.DataAccess
 {
     public class DatabaseManager(WtSbAssistantLogger logger, ApplicationDbContext<IdentityUser, ApplicationRole, string> context)
     {
-        public async Task InsertDataAsync(List<DMO> dmos, DateTime starTime)
+        public async Task InsertDataAsync(WtLog log)
         {
+            var dmos = WtLogParser.ParseLog(log);
+
             var basicInsertResult = await InsertBasicDataAsync(dmos); //TODO return failure code if more than 2 clans / more than 16 players (not CW)
 
-            await ConnectPlayerClanAsync(dmos, starTime);
+            await ConnectPlayerClanAsync(dmos, log.Time);
 
-            var match = await CreateMatchAsync(dmos, starTime);
+            var matchResult = await CreateMatchAsync(dmos, log);
 
-            if (match == null) return; //TODO return failure code if match already exists
+            if (!matchResult.Success) return; //TODO return failure code if match already exists
 
-            await CreateVehiclesAsync(dmos);
-
-            await ConnectPlayerClanMatchAsync(match, basicInsertResult.Item1, basicInsertResult.Item2);
+            var linkResult = await ConnectPlayerClanMatchAsync(matchResult.Value ?? new WtMatch(), basicInsertResult.Item1, basicInsertResult.Item2, dmos);
         }
 
-        public async Task<int> UpdateVehiclesAsync(List<ApiVehicle> vehicles)
+        public async Task<Result<int>> UpdateVehiclesAsync(List<ApiVehicle> vehicles, List<VehicleIdentifier> identifiers)
         {
             await context.WT_Vehicles.ExecuteDeleteAsync();
             await context.WT_VehicleVehicleTypes.ExecuteDeleteAsync();
@@ -71,40 +73,49 @@ namespace WebAPI.DataAccess
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return 0;
+                return new Result<int>(exception: ex);
             }
 
             var dbVehicles = vehicles.Select(v => new WtVehicle
             {
-                Name = v.Identifier,
+                Identifier = v.Identifier,
                 Nation = nations.First(n => n.Name == v.Country),
-                BattleRating = battleRatings.First(b => b.BattleRating == (decimal)v.RealisticGroundBr)
+                BattleRating = battleRatings.First(b => b.BattleRating == (decimal)v.RealisticGroundBr),
+                Name = identifiers.FirstOrDefault(i => i.Id == v.Identifier)?.Name ?? ""
             }).ToList();
 
             context.WT_Vehicles.AddRange(dbVehicles);
 
-            context.WT_VehicleVehicleTypes.AddRange(vehicles
-                .Select(v => v.VehicleSubTypes
-                    .Concat(new[] { v.VehicleType })
-                    .Select(
-                        vt => new WtVehicleVehicleType
-                        {
-                            Vehicle = dbVehicles.First(dv => dv.Name == v.Identifier),
-                            VehicleType = vehicleTypes.First(t => t.Name == vt)
-                        })
-                )
-                .SelectMany(vvt => vvt)
-                .ToList());
-
             try
             {
-                await context.SaveChangesAsync();
-                return vehicles.Count;
+                context.WT_VehicleVehicleTypes.AddRange(vehicles
+                    .Select(v => v.VehicleSubTypes
+                        .Concat(new[] { v.VehicleType })
+                        .Select(
+                            vt => new WtVehicleVehicleType
+                            {
+                                Vehicle = dbVehicles.First(dv => dv.Identifier == v.Identifier),
+                                VehicleType = vehicleTypes.First(t => t.Name == vt)
+                            })
+                    )
+                    .SelectMany(vvt => vvt)
+                    .ToList());
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return 0;
+                return new Result<int>(exception: ex);
+            }
+
+            try
+            {
+                await context.SaveChangesAsync();
+                return new Result<int>(dbVehicles.Count);
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return new Result<int>(exception: ex);
             }
         }
 
@@ -133,7 +144,6 @@ namespace WebAPI.DataAccess
             try
             {
                 await context.SaveChangesAsync();
-                logger.LogDebug($"Found players: {string.Join(", ", playerList.Select(p => p.Name))} in Clans {string.Join(", ", clanList.Select(c => c.Name))}");
                 return new Tuple<List<WtPlayer>, List<WtClan>>(playerList, clanList);
             }
             catch (Exception ex)
@@ -170,45 +180,37 @@ namespace WebAPI.DataAccess
             }
         }
 
-        private async Task<WtMatch?> CreateMatchAsync(List<DMO> dmos, DateTime starTime)
+        private async Task<Result<WtMatch>> CreateMatchAsync(List<DMO> dmos, WtLog log)
         {
-            var newMatch = new WtMatch
-            {
-                BattleRatingId = context.WT_BattleRatings.First(br => br.From <= starTime && br.Until >= starTime).UniqueId,
-                MatchStart = starTime,
-                MatchEnd = dmos.Last().Time,
-            };
-
-            var matches = context.WT_Matches.ToList();
-            if (matches.Contains(newMatch))
-            {
-                return null;
-            }
-
-            context.Add(newMatch);
-
             try
             {
+                var newMatch = new WtMatch
+                {
+                    BattleRatingId = context.WT_BattleRatings.First(br => br.From <= log.Time && br.Until >= log.Time).UniqueId,
+                    MatchStart = log.Time,
+                    MatchEnd = dmos.Last().Time,
+                    Result = WtLogParser.ParseMatchResult(log.Result ?? "")
+                };
+
+                var matches = context.WT_Matches.ToList();
+                if (matches.Contains(newMatch))
+                {
+                    return new Result<WtMatch>(message: "Match already exists");
+                }
+
+                context.Add(newMatch);
+
                 await context.SaveChangesAsync();
-                return newMatch;
+                return new Result<WtMatch>(value: newMatch);
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return null;
+                return new Result<WtMatch>(exception: ex);
             }
         }
 
-        private async Task CreateVehiclesAsync(List<DMO> dmos)
-        {
-            var vehicles = dmos.SelectMany(d => new[] { d.Vehicle1, d.Vehicle2 })
-                .Distinct()
-                .Where(v => !string.IsNullOrWhiteSpace(v))
-                .Select(v => new Vehicle { RawName = v })
-                .ToList();
-        }
-
-        private async Task<bool> ConnectPlayerClanMatchAsync(WtMatch match, List<WtPlayer> players, List<WtClan> clans)
+        private async Task<Result<bool>> ConnectPlayerClanMatchAsync(WtMatch match, List<WtPlayer> players, List<WtClan> clans, List<DMO> dmos)
         {
             context.WT_ClanMatch.BulkInsert(
                 clans.Select(c => new WtClanMatch
@@ -217,16 +219,56 @@ namespace WebAPI.DataAccess
                     MatchId = match.UniqueId
                 }).ToList());
 
+            var kds = WtLogParser.ParsePlayerKd(dmos);
+            var vehicles = await FindBestVehicleMatch(kds, match);
+
+            context.WT_VehiclePlayerMatches.AddRange(kds.Select(k => new WtVehiclePlayerMatch
+            {
+                Player = players.First(p => p.Name == k.Name),
+                Match = match,
+                Kills = k.Kills,
+                Deaths = k.Deaths,
+                Vehicle = vehicles.First(v => v.PlayerName == k.Name).BestMatch
+            }));
+
             try
             {
                 await context.SaveChangesAsync();
-                return true;
+                return new Result<bool>(true);
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
-                return false;
+                return new Result<bool>(exception: ex);
             }
+        }
+
+        private async Task<List<PlayerVehicle>> FindBestVehicleMatch(List<PlayerKd> kds, WtMatch match)
+        {
+            var playerVehicles = kds.Select(k => new PlayerVehicle
+            {
+                PlayerName = k.Name,
+                VehicleName = k.VehicleName,
+                PossibleMatches = context.WT_Vehicles.Where(v => v.Name.Equals(k.VehicleName) && v.BattleRating.BattleRating <= match.BattleRating.BattleRating).ToList()
+            }).ToList();
+
+            foreach (var playerVehicle in playerVehicles)
+            {
+                if (playerVehicle.PossibleMatches.Count == 1)
+                {
+                    playerVehicle.BestMatch = playerVehicle.PossibleMatches.First();
+                    continue;
+                }
+
+                playerVehicle.PossibleMatches = context.WT_Vehicles
+                    .Where(v => v.Name.Contains(playerVehicle.VehicleName) &&
+                                v.BattleRating.BattleRating <= match.BattleRating.BattleRating)
+                    .Include(wtVehicle => wtVehicle.BattleRating).ToList();
+
+                playerVehicle.BestMatch = playerVehicle.PossibleMatches.OrderBy(v => v.BattleRating.BattleRating).First();
+            }
+
+            return playerVehicles;
         }
     }
 }

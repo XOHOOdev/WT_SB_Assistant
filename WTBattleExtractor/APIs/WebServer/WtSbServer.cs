@@ -23,7 +23,7 @@ namespace WTBattleExtractor.APIs.WebServer
 
             try
             {
-                var response = await _client.PostAsJsonAsync("WtLog", log);
+                var response = await _client.PostAsJsonAsync("WtLog", new[] { log });
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)

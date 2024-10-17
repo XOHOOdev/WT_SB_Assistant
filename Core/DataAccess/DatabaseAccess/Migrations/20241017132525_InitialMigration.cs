@@ -357,7 +357,8 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 {
                     UniqueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Identifier = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NationId = table.Column<int>(type: "int", nullable: false),
                     BattleRatingId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -558,9 +559,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 column: "BattleRatingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WT_Vehicles_Name",
+                name: "IX_WT_Vehicles_Identifier",
                 table: "WT_Vehicles",
-                column: "Name",
+                column: "Identifier",
                 unique: true);
 
             migrationBuilder.CreateIndex(

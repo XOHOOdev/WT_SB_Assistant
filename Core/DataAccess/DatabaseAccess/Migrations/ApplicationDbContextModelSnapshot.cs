@@ -469,9 +469,13 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.Property<int>("BattleRatingId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Identifier")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NationId")
                         .HasColumnType("int");
@@ -480,7 +484,7 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
                     b.HasIndex("BattleRatingId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Identifier")
                         .IsUnique();
 
                     b.HasIndex("NationId");

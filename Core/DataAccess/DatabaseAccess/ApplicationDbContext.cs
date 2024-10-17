@@ -30,7 +30,6 @@ public class ApplicationDbContext<TUser, TRole, TKey>(
 
     public DbSet<WtMatch> WT_Matches { get; set; }
 
-
     public DbSet<WtClanMatch> WT_ClanMatch { get; set; }
 
     public DbSet<WtNation> WT_Nations { get; set; }

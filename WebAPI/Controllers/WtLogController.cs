@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using WebAPI.DataAccess;
-using WebAPI.Parser;
 using WtSbAssistant.Core.Dto;
 using WtSbAssistant.Core.Logger;
 
@@ -12,14 +11,16 @@ namespace WebAPI.Controllers
     public class WtLogController(WtSbAssistantLogger logger, DatabaseManager database) : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<WtLog>> PostWtLog(WtLog log)
+        public async Task<ActionResult<WtLog>> PostWtLog(WtLog[] logs)
         {
-            logger.LogVerbose($"Received log from {log.Time.ToString(CultureInfo.InvariantCulture)}");
-            var dmos = WtLogParser.ParseLog(log);
+            foreach (var log in logs)
+            {
+                logger.LogVerbose($"Received logs from {log.Time.ToString(CultureInfo.InvariantCulture)}");
 
-            await database.InsertDataAsync(dmos, log.Time);
+                await database.InsertDataAsync(log);
+            }
 
-            return CreatedAtAction(nameof(PostWtLog), null, log);
+            return CreatedAtAction(nameof(PostWtLog), null, logs);
         }
     }
 }

@@ -8,12 +8,14 @@
 @inject IJSRuntime Js
 @attribute [HasPermission(Permissions.WtDataManagement.View)]
 
-<InputFile OnChange="UploadFileAsync"></InputFile>
+
+<InputFile class="form-control" OnChange="LoadFiles" multiple />
 
 @code {
+    private const int MaxAllowedFiles = 50;
 
-    private async Task UploadFileAsync(InputFileChangeEventArgs e)
+    private async Task LoadFiles(InputFileChangeEventArgs e)
     {
-        await WtService.UploadFileAsync(e.File);
+        await WtService.UploadFilesAsync(e.GetMultipleFiles(MaxAllowedFiles).ToArray());
     }
 }

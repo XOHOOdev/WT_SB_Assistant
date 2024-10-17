@@ -3,13 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-[Index(nameof(Name), IsUnique = true)]
+[Index(nameof(Identifier), IsUnique = true)]
 public class WtVehicle
 {
     [Key]
     public int UniqueId { get; set; }
 
     public string Name { get; set; } = null!;
+
+    public string Identifier { get; set; } = null!;
 
     public int NationId { get; set; }
 

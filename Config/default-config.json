@@ -13,5 +13,9 @@
 
   "VehicleApi": {
     "BaseUrl": "https://www.wtvehiclesapi.sgambe.serv00.net/api/"
+  },
+
+  "Scraper": {
+    "VehicleCDK-URL": "https://wiki.warthunder.com/CDK_Reference/Units"
   }
 }

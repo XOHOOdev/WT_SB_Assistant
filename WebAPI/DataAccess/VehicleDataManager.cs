@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using System.Collections;
 using WebAPI.Dto;
 using WtSbAssistant.Core.Helpers;
@@ -8,10 +9,12 @@ namespace WebAPI.DataAccess
 {
     public class VehicleDataManager(ConfigHelper config, WtSbAssistantLogger logger)
     {
-        private HttpClient _client = new HttpClient
+        private readonly HttpClient _apiClient = new HttpClient
         {
             BaseAddress = new Uri(config.GetConfig("VehicleApi", "BaseUrl") ?? "")
         };
+
+        private readonly HtmlWeb _web = new HtmlWeb();
 
         public async Task<List<ApiVehicle>> GetAllVehicles()
         {
@@ -38,7 +41,7 @@ namespace WebAPI.DataAccess
         {
             try
             {
-                var response = await _client.GetAsync(
+                var response = await _apiClient.GetAsync(
                     $"vehicles?limit={limit}&page={page}&isPremium={isPremium.ToString().ToLowerInvariant()}&isPack={isPack.ToString().ToLowerInvariant()}&isSquadronVehicle={isSquadronVehicle.ToString().ToLowerInvariant()}&isOnMarketplace={isOnMarketplace.ToString().ToLowerInvariant()}&excludeKillstreak=true&excludeEventVehicles=true");
 
                 response.EnsureSuccessStatusCode();
@@ -50,6 +53,29 @@ namespace WebAPI.DataAccess
                 logger.LogException(ex);
                 return [];
             }
+        }
+
+        public List<VehicleIdentifier> GetIdentifierTranslation()
+        {
+            var document = _web.Load(config.GetConfig("Scraper", "VehicleCDK-URL") ?? "");
+            var elements = document.DocumentNode.SelectNodes("//table[@class='wikitable sortable mw-collapsible mw-collapsed']");
+
+            return elements
+                .Select(
+                    n => n.ChildNodes
+                        .Where(cn => cn.Name == "tr")
+                        .Skip(1)
+                        .Select(cnn => cnn.InnerText)
+                    )
+                .SelectMany(tr => tr)
+                .Select(s => s.Split('\n'))
+                .Select(sl => new VehicleIdentifier
+                {
+                    Id = sl[1].Trim(),
+                    Name = sl[2].Trim()
+
+                })
+                .ToList();
         }
     }
 }
