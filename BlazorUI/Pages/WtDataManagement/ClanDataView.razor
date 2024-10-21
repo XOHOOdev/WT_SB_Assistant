@@ -15,7 +15,7 @@
         <h3>@Localizer["LastMatches"]</h3>
         <div class="input-group mb-3">
             <span class="input-group-text">@Localizer["Clan"]</span>
-            <input type="search" class="form-control" list="clanNameOptions" id="clanDataList" @bind="_clanName" placeholder="@Localizer["TypeToSearch"]">
+            <input type="search" class="form-control" list="clanNameOptions" id="clanDataList" @bind="_clanName" @bind:event="oninput" @bind:after="LoadMatches" placeholder="@Localizer["TypeToSearch"]">
             <datalist id="clanNameOptions">
                 @foreach (var clanName in _clanNames)
                 {
@@ -23,12 +23,7 @@
                 }
             </datalist>
             <span class="input-group-text">@Localizer["Count"]</span>
-            <input type="number" class="form-control" min="1" max="30" @bind="_resultCount" />
-            <button type="button" class="btn btn-outline-secondary" role="status" @onclick="LoadMatches">
-                <div class="spinner-border">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </button>
+            <input type="number" class="form-control" min="0" max="30" @bind="_resultCount" @bind:event="onchange" @bind:after="LoadMatches"/>
         </div>
     </div>
     <div class="card-body container">
