@@ -404,32 +404,39 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WT_VehiclePlayerMatches",
+                name: "WT_BattleAction",
                 columns: table => new
                 {
+                    UniqueId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     VehicleId = table.Column<int>(type: "int", nullable: false),
                     PlayerId = table.Column<int>(type: "int", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
-                    Kills = table.Column<int>(type: "int", nullable: false),
-                    Deaths = table.Column<int>(type: "int", nullable: false)
+                    LinkedActionId = table.Column<int>(type: "int", nullable: true),
+                    ActionType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WT_VehiclePlayerMatches", x => new { x.VehicleId, x.PlayerId, x.MatchId });
+                    table.PrimaryKey("PK_WT_BattleAction", x => x.UniqueId);
                     table.ForeignKey(
-                        name: "FK_WT_VehiclePlayerMatches_WT_Matches_MatchId",
+                        name: "FK_WT_BattleAction_WT_BattleAction_LinkedActionId",
+                        column: x => x.LinkedActionId,
+                        principalTable: "WT_BattleAction",
+                        principalColumn: "UniqueId");
+                    table.ForeignKey(
+                        name: "FK_WT_BattleAction_WT_Matches_MatchId",
                         column: x => x.MatchId,
                         principalTable: "WT_Matches",
                         principalColumn: "UniqueId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WT_VehiclePlayerMatches_WT_Players_PlayerId",
+                        name: "FK_WT_BattleAction_WT_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "WT_Players",
                         principalColumn: "UniqueId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WT_VehiclePlayerMatches_WT_Vehicles_VehicleId",
+                        name: "FK_WT_BattleAction_WT_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "WT_Vehicles",
                         principalColumn: "UniqueId",
@@ -505,6 +512,26 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WT_BattleAction_LinkedActionId",
+                table: "WT_BattleAction",
+                column: "LinkedActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_BattleAction_MatchId",
+                table: "WT_BattleAction",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_BattleAction_PlayerId",
+                table: "WT_BattleAction",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WT_BattleAction_VehicleId",
+                table: "WT_BattleAction",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WT_ClanMatch_MatchId",
                 table: "WT_ClanMatch",
                 column: "MatchId");
@@ -542,16 +569,6 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 table: "WT_VehicleBattleRatings",
                 column: "BattleRating",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WT_VehiclePlayerMatches_MatchId",
-                table: "WT_VehiclePlayerMatches",
-                column: "MatchId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WT_VehiclePlayerMatches_PlayerId",
-                table: "WT_VehiclePlayerMatches",
-                column: "PlayerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WT_Vehicles_BattleRatingId",
@@ -609,13 +626,13 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "LG_LogMessages");
 
             migrationBuilder.DropTable(
+                name: "WT_BattleAction");
+
+            migrationBuilder.DropTable(
                 name: "WT_ClanMatch");
 
             migrationBuilder.DropTable(
                 name: "WT_ClanPlayers");
-
-            migrationBuilder.DropTable(
-                name: "WT_VehiclePlayerMatches");
 
             migrationBuilder.DropTable(
                 name: "WT_VehicleVehicleTypes");
@@ -630,10 +647,10 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "WT_Clans");
+                name: "WT_Matches");
 
             migrationBuilder.DropTable(
-                name: "WT_Matches");
+                name: "WT_Clans");
 
             migrationBuilder.DropTable(
                 name: "WT_Players");

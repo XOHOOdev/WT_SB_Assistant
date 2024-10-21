@@ -13,13 +13,16 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<WtLog>> PostWtLog(WtLog[] logs)
         {
+            var fails = 0;
+
             foreach (var log in logs)
             {
                 logger.LogVerbose($"Received logs from {log.Time.ToString(CultureInfo.InvariantCulture)}");
 
-                await database.InsertDataAsync(log);
+                var result = await database.InsertDataAsync(log);
+                if (!result.Success) fails++;
             }
-
+            if (fails > 0) BadRequest($"{fails} Fails. Partial data might have been inserted.");
             return CreatedAtAction(nameof(PostWtLog), null, logs);
         }
     }

@@ -1,0 +1,175 @@
+﻿@using WtSbAssistant.BlazorUI.Authorization
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData.Dto
+@using WtSbAssistant.BlazorUI.Permissions
+@using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities
+
+@inject ClanDataManagement ClanManagement
+@inject IJSRuntime Js
+@inject IStringLocalizer<WtDataManagement> Localizer
+@attribute [HasPermission(Permissions.WtDataManagement.View)]
+
+@*TODO search bar*@
+<div class="card">
+    <div class="card-header">
+        <h3>@Localizer["LastMatches"]</h3>
+        <div class="input-group mb-3">
+            <span class="input-group-text">@Localizer["Clan"]</span>
+            <input type="search" class="form-control" list="clanNameOptions" id="clanDataList" @bind="_clanName" placeholder="@Localizer["TypeToSearch"]">
+            <datalist id="clanNameOptions">
+                @foreach (var clanName in _clanNames)
+                {
+                    <option>@clanName</option>
+                }
+            </datalist>
+            <span class="input-group-text">@Localizer["Count"]</span>
+            <input type="number" class="form-control" min="1" max="30" @bind="_resultCount" />
+            <button type="button" class="btn btn-outline-secondary" role="status" @onclick="LoadMatches">
+                <div class="spinner-border">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </button>
+        </div>
+    </div>
+    <div class="card-body container">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col">
+                    <h4>@Localizer["LastMatches"]</h4>
+                    <div class="accordion" id="clanAccordion">
+                        @foreach (var clan in _clans)
+                        {
+                            var bgColor = clan.LastMatch.Result switch
+                            {
+                                WtMatchResult.Unknown => "black",
+                                WtMatchResult.Win => "green",
+                                WtMatchResult.Loss => "red",
+                                WtMatchResult.ProbWin => "darkgreen",
+                                WtMatchResult.ProbLoss => "darkred",
+                                _ => throw new ArgumentOutOfRangeException()
+                            };
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading-@clan.Id">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-@clan.LastMatch.Id" aria-expanded="true"
+                                            aria-controls="collapse-@clan.LastMatch.Id" style="background-color:@bgColor;color:white" @onclick=@(() => LoadClan(@clan.Id))>
+                                        @clan.Name ― @clan.LastMatch.StartTime.ToLocalTime() ― @clan.LastMatch.Duration
+                                    </button>
+                                </h2>
+                                <div id="collapse-@clan.LastMatch.Id" class="accordion-collapse collapse" aria-labelledby="heading-@clan.Id" data-bs-parent="#clanAccordion">
+                                    <div class="accordion-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Localizer["PlayerName"]</th>
+                                                    <th>@Localizer["Vehicle"]</th>
+                                                    <th>@Localizer["AirKills"]</th>
+                                                    <th>@Localizer["GroundKills"]</th>
+                                                    <th>@Localizer["Deaths"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var player in clan.LastMatch.Players)
+                                                {
+                                                    <tr>
+                                                        <td>@player.Name</td>
+                                                        <td>@player.Vehicle.Name</td>
+                                                        <td>@player.Vehicle.AirKills</td>
+                                                        <td>@player.Vehicle.GroundKills</td>
+                                                        <td>@player.Vehicle.Deaths</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col">
+                    <h4>@Localizer["Clan"]</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["PlayerName"]</th>
+                                <th>@Localizer["Vehicle"]</th>
+                                <th>@Localizer["Matches"]</th>
+                                <th>@Localizer["AirKills"]</th>
+                                <th>@Localizer["GroundKills"]</th>
+                                <th>@Localizer["Deaths"]</th>
+                            </tr>
+                        </thead>
+                        @if (_currentClan != null)
+                        {
+                            <tbody>
+                                @foreach (var player in _currentClan.PlayerModels)
+                                {
+                                    var vehicleList = string.Join("<br>", player.Vehicles.Select(v => $"<h6>{v.Name}</h6> ({v.Matches}, {v.AirKills}, {v.GroundKills}, {v.Deaths})"));
+
+                                    <tr>
+                                        <td>@player.Name</td>
+                                        @if (player.Vehicles.Count > 1)
+                                        {
+                                            <td>
+                                                <a href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title="@vehicleList">@string.Join(", ", player.Vehicles.Select(v => v.Name))</a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>@player.Vehicles.First().Name</td>
+                                        }
+                                        <td>@player.Vehicles.Sum(v => v.Matches)</td>
+                                        <td>@player.Vehicles.Sum(v => v.AirKills)</td>
+                                        <td>@player.Vehicles.Sum(v => v.GroundKills)</td>
+                                        <td>@player.Vehicles.Sum(v => v.Deaths)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function enableTooltips() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    }
+</script>
+
+@code {
+    private List<MatchClanModel> _clans = [];
+    private List<string> _clanNames = [];
+    private ClanModel? _currentClan;
+    private string? _clanName;
+    private int _resultCount = 10;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Js.InvokeVoidAsync("enableTooltips");
+    }
+
+    protected override void OnInitialized()
+    {
+        LoadMatches();
+    }
+
+    private void LoadMatches()
+    {
+        if (_resultCount > 30) _resultCount = 30;
+        if (_resultCount < 1) _resultCount = 1;
+
+        _clanNames = ClanManagement.GetClanNames();
+        _clans = ClanManagement.GetClans(_clanName, _resultCount);
+    }
+
+    private void LoadClan(int clanId)
+    {
+        _currentClan = ClanManagement.GetClan(clanId);
+    }
+}

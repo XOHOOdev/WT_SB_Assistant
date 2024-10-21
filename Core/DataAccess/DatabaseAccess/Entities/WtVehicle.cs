@@ -23,7 +23,7 @@ public class WtVehicle
 
     public virtual ICollection<WtVehicleVehicleType> VehicleTypes { get; set; } = null!;
 
-    public virtual ICollection<WtVehiclePlayerMatch> WtVehiclePlayerMatches { get; set; } = new List<WtVehiclePlayerMatch>();
+    public virtual ICollection<WtBattleAction> WtBattleActions { get; set; } = new List<WtBattleAction>();
 
     public override bool Equals(object? obj)
     {

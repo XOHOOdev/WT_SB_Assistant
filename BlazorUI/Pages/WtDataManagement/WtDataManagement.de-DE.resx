@@ -97,46 +97,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Logs" xml:space="preserve">
-    <value>Logs</value>
+  <data name="WtDataManagement" xml:space="preserve">
+    <value>War Thunder Datenverwaltung</value>
   </data>
-  <data name="Range" xml:space="preserve">
-    <value>Spanne</value>
+  <data name="Upload" xml:space="preserve">
+    <value>Hochladen</value>
+  </data>
+  <data name="Clan" xml:space="preserve">
+    <value>Klan</value>
+  </data>
+  <data name="LastMatches" xml:space="preserve">
+    <value>Letzte Gefechte</value>
+  </data>
+  <data name="PlayerName" xml:space="preserve">
+    <value>Spielername</value>
+  </data>
+  <data name="Vehicle" xml:space="preserve">
+    <value>Fahrzeug</value>
+  </data>
+  <data name="AirKills" xml:space="preserve">
+    <value>Luftabschüsse</value>
+  </data>
+  <data name="GroundKills" xml:space="preserve">
+    <value>Bodenabschüsse</value>
+  </data>
+  <data name="Deaths" xml:space="preserve">
+    <value>Tode</value>
+  </data>
+  <data name="Matches" xml:space="preserve">
+    <value>Gefechte</value>
   </data>
   <data name="Count" xml:space="preserve">
     <value>Anzahl</value>
   </data>
-  <data name="Severity" xml:space="preserve">
-    <value>Schwere</value>
-  </data>
-  <data name="Critical" xml:space="preserve">
-    <value>Kritisch</value>
-  </data>
-  <data name="Exception" xml:space="preserve">
-    <value>Fehler</value>
-  </data>
-  <data name="Warning" xml:space="preserve">
-    <value>Warnung</value>
-  </data>
-  <data name="Info" xml:space="preserve">
-    <value>Info</value>
-  </data>
-  <data name="Verbose" xml:space="preserve">
-    <value>Ausführlich</value>
-  </data>
-  <data name="Debug" xml:space="preserve">
-    <value>Fehlerbehebung</value>
-  </data>
-  <data name="Id" xml:space="preserve">
-    <value>Id</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Quelle</value>
-  </data>
-  <data name="Message" xml:space="preserve">
-    <value>Nachricht</value>
-  </data>
-  <data name="Time" xml:space="preserve">
-    <value>Zeit</value>
+  <data name="TypeToSearch" xml:space="preserve">
+    <value>Tippen um zu suchen...</value>
   </data>
 </root>

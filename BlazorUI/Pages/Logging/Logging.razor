@@ -11,6 +11,8 @@
 @inject IJSRuntime Js
 @attribute [HasPermission(Permissions.Logging.View)]
 
+<PageTitle>@Localizer["Logs"]</PageTitle>
+
 @if (_logs == null)
 {
     <p>

@@ -16,6 +16,11 @@
   },
 
   "Scraper": {
-    "VehicleCDK-URL": "https://wiki.warthunder.com/CDK_Reference/Units"
+    "VehicleCDK-URL": "https://wiki.warthunder.com/CDK_Reference/Units",
+    "VehicleWiki": "https://wiki.warthunder.com/"
+  },
+
+  "WtData": {
+    "OwnClan": "AZUBI"
   }
 }

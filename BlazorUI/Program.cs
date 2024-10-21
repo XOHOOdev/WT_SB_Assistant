@@ -54,8 +54,8 @@ internal class Program
         builder.Services.AddScoped<UserManagementService>();
         builder.Services.AddScoped<LoggingService>();
         builder.Services.AddScoped<WtDataManagementService>();
+        builder.Services.AddScoped<ClanDataManagement>();
         builder.Services.AddScoped<ConfigHelper>();
-
         builder.Services.AddScoped<WtSbAssistantLogger>();
         builder.Services.AddHttpClient();
 

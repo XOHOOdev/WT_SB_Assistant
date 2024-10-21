@@ -17,16 +17,15 @@ public class WtMatch
 
     public virtual WtBattleRating BattleRating { get; set; } = null!;
 
-    public virtual ICollection<WtVehiclePlayerMatch> WtVehiclePlayerMatches { get; set; } = new List<WtVehiclePlayerMatch>();
+    public virtual ICollection<WtBattleAction> WtBattleActions { get; set; } = new List<WtBattleAction>();
 
-    public virtual ICollection<WtClanMatch> WtClanMatch { get; set; } = new List<WtClanMatch>();
+    public virtual ICollection<WtClanMatch> WtClanMatches { get; set; } = new List<WtClanMatch>();
 
     public override bool Equals(object? obj)
     {
         return obj is WtMatch match &&
                match.BattleRatingId == BattleRatingId &&
-               ((MatchStart >= match.MatchStart && MatchStart <= match.MatchEnd) ||
-                (match.MatchStart >= MatchStart && match.MatchStart <= MatchEnd));
+               MatchStart <= match.MatchEnd && match.MatchStart <= MatchEnd; //check for overlap of matches
     }
 
     public override int GetHashCode()

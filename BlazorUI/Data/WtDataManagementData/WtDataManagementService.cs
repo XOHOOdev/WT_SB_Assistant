@@ -9,8 +9,7 @@ namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData
 {
     public class WtDataManagementService(WtSbAssistantLogger logger, ConfigHelper config)
     {
-
-        public async Task UploadFilesAsync(IBrowserFile[] files)
+        public async Task<Result<bool>> UploadFilesAsync(IBrowserFile[] files)
         {
             List<WtLog> logs = [];
             try
@@ -38,6 +37,7 @@ namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData
                         }
                         catch (Exception ex)
                         {
+                            logger.LogException(ex);
                             return new WtLogItem();
                         }
                     }).ToList();
@@ -45,7 +45,7 @@ namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData
                     var log = new WtLog
                     {
                         Logs = logItems,
-                        Time = DateTime.ParseExact(startTimeString, "yyyy_MM_dd_HH_mm_ss", CultureInfo.InstalledUICulture).Subtract(TimeSpan.FromSeconds(logItems.First().Time))
+                        Time = DateTime.ParseExact(startTimeString, "yyyy_MM_dd_HH_mm_ss", CultureInfo.InstalledUICulture).ToUniversalTime().Subtract(TimeSpan.FromSeconds(logItems.First().Time))
                     };
 
                     logs.Add(log);
@@ -55,11 +55,12 @@ namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData
                 http.BaseAddress = new Uri(config.GetConfig("WebAPI", "Address") ?? string.Empty);
 
                 var response = await http.PostAsJsonAsync("WtLog", logs.ToArray());
-                response.EnsureSuccessStatusCode();
+                return response.IsSuccessStatusCode ? new Result<bool>(true) : new Result<bool>(success: false, message: await response.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
+                return new Result<bool>(exception: ex);
             }
         }
     }

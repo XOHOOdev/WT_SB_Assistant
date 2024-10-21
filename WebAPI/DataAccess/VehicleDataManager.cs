@@ -14,7 +14,7 @@ namespace WebAPI.DataAccess
             BaseAddress = new Uri(config.GetConfig("VehicleApi", "BaseUrl") ?? "")
         };
 
-        private readonly HtmlWeb _web = new HtmlWeb();
+        private readonly HtmlWeb _web = new();
 
         public async Task<List<ApiVehicle>> GetAllVehicles()
         {
@@ -76,6 +76,40 @@ namespace WebAPI.DataAccess
 
                 })
                 .ToList();
+        }
+
+        public ApiVehicle ScrapeVehicle(string name)
+        {
+            try
+            {
+
+                var url = $"{config.GetConfig("Scraper", "VehicleWiki") ?? ""}{name.Replace(' ', '_')}";
+                var document = _web.Load(url);
+                var nationElement = document.DocumentNode.SelectNodes("//div[@class='general_info_nation']")[0]
+                    .InnerText.TrimStart().ToLowerInvariant();
+                var classElement =
+                    document.DocumentNode.SelectNodes("//div[@class='general_info_class']")[0].InnerText.Split('\n')[1]
+                        .Replace(' ', '_').ToLowerInvariant();
+                var brElement = double.Parse(document.DocumentNode.SelectNodes("//div[@class='general_info_br']")[0]
+                    .InnerText.Split('\n')[7]);
+
+                return new ApiVehicle
+                {
+                    Country = nationElement,
+                    VehicleType = classElement,
+                    RealisticGroundBr = brElement
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+                return new ApiVehicle
+                {
+                    Country = "china",
+                    VehicleType = "spaa",
+                    RealisticGroundBr = 1.0
+                };
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ public class WtPlayer
 
     public virtual ICollection<WtClanPlayer> WtClanPlayers { get; set; } = new List<WtClanPlayer>();
 
-    public virtual ICollection<WtVehiclePlayerMatch> WtVehiclePlayerMatches { get; set; } = new List<WtVehiclePlayerMatch>();
+    public virtual ICollection<WtBattleAction> WtBattleActions { get; set; } = new List<WtBattleAction>();
 
     public override bool Equals(object? obj)
     {

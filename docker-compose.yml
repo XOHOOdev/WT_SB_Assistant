@@ -24,7 +24,7 @@ services:
       - "wtsb-sql"
     restart: always
   wtsb-sql:
-    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    image: "mcr.microsoft.com/azure-sql-edge:latest"
     container_name: wtsb-sql
     user: root
     ports:

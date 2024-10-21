@@ -5,17 +5,61 @@
 
 @inject WtDataManagementService WtService
 @inject IStringLocalizer<WtDataManagement> Localizer
-@inject IJSRuntime Js
 @attribute [HasPermission(Permissions.WtDataManagement.View)]
 
+<PageTitle>@Localizer["WtDataManagement"]</PageTitle>
 
-<InputFile class="form-control" OnChange="LoadFiles" multiple />
+<h3>@Localizer["WtDataManagement"]</h3>
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <AuthorizeView>
+                    <li class="nav-item">
+                        <button class="btn" type="submit" @onclick='() => CategorySelected("matches")'>@Localizer["LastMatches"]</button>
+                    </li>
+                    @if (context.User.Authorize(Permissions.WtDataManagement.Create))
+                    {
+                        <li class="nav-item">
+                            <button class="btn" type="submit" @onclick='() => CategorySelected("upload")'>@Localizer["Upload"]</button>
+                        </li>
+                    }
+                </AuthorizeView>
+            </ul>
+        </div>
+    </div>
+</nav>
+@switch (_selectedCategory)
+{
+    case "upload":
+        <AuthorizeView>
+            @if (context.User.Authorize(Permissions.WtDataManagement.Create))
+            {
+                <InputFile class="form-control" OnChange="LoadFiles" multiple />
+            }
+        </AuthorizeView>
+        break;
+    default:
+        <ClanDataView />
+        break;
+}
 
 @code {
-    private const int MaxAllowedFiles = 50;
+    private const int MaxAllowedFiles = 100;
+    private string _selectedCategory = null!;
+
+    protected override void OnInitialized()
+    {
+        _selectedCategory = "matches";
+    }
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
         await WtService.UploadFilesAsync(e.GetMultipleFiles(MaxAllowedFiles).ToArray());
+    }
+
+    private void CategorySelected(string category)
+    {
+        _selectedCategory = category;
     }
 }

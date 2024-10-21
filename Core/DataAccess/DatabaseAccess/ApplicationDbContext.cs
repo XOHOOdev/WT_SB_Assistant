@@ -38,7 +38,7 @@ public class ApplicationDbContext<TUser, TRole, TKey>(
 
     public DbSet<WtVehicle> WT_Vehicles { get; set; }
 
-    public DbSet<WtVehiclePlayerMatch> WT_VehiclePlayerMatches { get; set; }
+    public DbSet<WtBattleAction> WT_BattleAction { get; set; }
 
     public DbSet<WtVehicleVehicleType> WT_VehicleVehicleTypes { get; set; }
 

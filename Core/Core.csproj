@@ -34,7 +34,6 @@
 
 	<ItemGroup>
 	  <Folder Include="DataAccess\DatabaseAccess\Migrations\" />
-	  <Folder Include="DataAccess\WtVehicleApi\" />
 	</ItemGroup>
 
 </Project>

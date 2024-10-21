@@ -14,7 +14,7 @@ using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext<IdentityUser, ApplicationRole, string>))]
-    [Migration("20241017132525_InitialMigration")]
+    [Migration("20241018165928_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -319,6 +319,42 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("US_Permissions");
                 });
 
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleAction", b =>
+                {
+                    b.Property<int>("UniqueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UniqueId"));
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LinkedActionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UniqueId");
+
+                    b.HasIndex("LinkedActionId");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("WT_BattleAction");
+                });
+
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleRating", b =>
                 {
                     b.Property<int>("UniqueId")
@@ -514,32 +550,6 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.ToTable("WT_VehicleBattleRatings");
                 });
 
-            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehiclePlayerMatch", b =>
-                {
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MatchId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Deaths")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Kills")
-                        .HasColumnType("int");
-
-                    b.HasKey("VehicleId", "PlayerId", "MatchId");
-
-                    b.HasIndex("MatchId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("WT_VehiclePlayerMatches");
-                });
-
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleType", b =>
                 {
                     b.Property<int>("UniqueId")
@@ -641,6 +651,39 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleAction", b =>
+                {
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtBattleAction", "LinkedAction")
+                        .WithMany()
+                        .HasForeignKey("LinkedActionId");
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", "Match")
+                        .WithMany("WtBattleActions")
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", "Player")
+                        .WithMany("WtBattleActions")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", "Vehicle")
+                        .WithMany("WtBattleActions")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LinkedAction");
+
+                    b.Navigation("Match");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClanMatch", b =>
                 {
                     b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtClan", "Clan")
@@ -709,33 +752,6 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
                     b.Navigation("Nation");
                 });
 
-            modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehiclePlayerMatch", b =>
-                {
-                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", "Match")
-                        .WithMany("WtVehiclePlayerMatches")
-                        .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", "Player")
-                        .WithMany("WtVehiclePlayerMatches")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", "Vehicle")
-                        .WithMany("WtVehiclePlayerMatches")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Match");
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Vehicle");
-                });
-
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleVehicleType", b =>
                 {
                     b.HasOne("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", "Vehicle")
@@ -769,9 +785,9 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtMatch", b =>
                 {
-                    b.Navigation("WtClanMatch");
+                    b.Navigation("WtBattleActions");
 
-                    b.Navigation("WtVehiclePlayerMatches");
+                    b.Navigation("WtClanMatch");
                 });
 
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtNation", b =>
@@ -781,16 +797,16 @@ namespace WtSbAssistant.Core.DataAccess.DatabaseAccess.Migrations
 
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtPlayer", b =>
                 {
-                    b.Navigation("WtClanPlayers");
+                    b.Navigation("WtBattleActions");
 
-                    b.Navigation("WtVehiclePlayerMatches");
+                    b.Navigation("WtClanPlayers");
                 });
 
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicle", b =>
                 {
                     b.Navigation("VehicleTypes");
 
-                    b.Navigation("WtVehiclePlayerMatches");
+                    b.Navigation("WtBattleActions");
                 });
 
             modelBuilder.Entity("WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities.WtVehicleBattleRating", b =>
