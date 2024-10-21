@@ -18,6 +18,9 @@
                     <li class="nav-item">
                         <button class="btn" type="submit" @onclick='() => CategorySelected("matches")'>@Localizer["LastMatches"]</button>
                     </li>
+                    <li class="nav-item">
+                        <button class="btn" type="submit" @onclick='() => CategorySelected("my-clan")'>@Localizer["MyClan"]</button>
+                    </li>
                     @if (context.User.Authorize(Permissions.WtDataManagement.Create))
                     {
                         <li class="nav-item">
@@ -38,6 +41,9 @@
                 <InputFile class="form-control" OnChange="LoadFiles" multiple />
             }
         </AuthorizeView>
+        break;
+    case "my-clan":
+        <MyClanView/>
         break;
     default:
         <ClanDataView />

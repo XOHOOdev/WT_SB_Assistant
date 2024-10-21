@@ -9,7 +9,6 @@
 @inject IStringLocalizer<WtDataManagement> Localizer
 @attribute [HasPermission(Permissions.WtDataManagement.View)]
 
-@*TODO search bar*@
 <div class="card">
     <div class="card-header">
         <h3>@Localizer["LastMatches"]</h3>
@@ -49,12 +48,12 @@
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#collapse-@clan.LastMatch.Id" aria-expanded="true"
                                             aria-controls="collapse-@clan.LastMatch.Id" style="background-color:@bgColor;color:white" @onclick=@(() => LoadClan(@clan.Id))>
-                                        @clan.Name ― @clan.LastMatch.StartTime.ToLocalTime() ― @clan.LastMatch.Duration
+                                        <a @onclick=@(()=>LoadClanMatches(@clan.Name)) style="color:lightgray;text-decoration:underline">@clan.Name</a> ― @clan.LastMatch.StartTime.ToLocalTime() ― @clan.LastMatch.Duration
                                     </button>
                                 </h2>
                                 <div id="collapse-@clan.LastMatch.Id" class="accordion-collapse collapse" aria-labelledby="heading-@clan.Id" data-bs-parent="#clanAccordion">
                                     <div class="accordion-body">
-                                        <table class="table">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>@Localizer["PlayerName"]</th>
@@ -85,7 +84,7 @@
                 </div>
                 <div class="col">
                     <h4>@Localizer["Clan"]</h4>
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>@Localizer["PlayerName"]</th>
@@ -151,6 +150,12 @@
 
     protected override void OnInitialized()
     {
+        LoadMatches();
+    }
+
+    private void LoadClanMatches(string clanName)
+    {
+        _clanName = clanName;
         LoadMatches();
     }
 

@@ -153,4 +153,7 @@
   <data name="TypeToSearch" xml:space="preserve">
     <value>Type to search...</value>
   </data>
+  <data name="MyClan" xml:space="preserve">
+    <value>My Clan</value>
+  </data>
 </root>
