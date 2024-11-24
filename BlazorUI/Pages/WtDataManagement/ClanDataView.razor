@@ -1,8 +1,8 @@
 ﻿@using WtSbAssistant.BlazorUI.Authorization
-@using WtSbAssistant.BlazorUI.Data.WtDataManagementData
-@using WtSbAssistant.BlazorUI.Data.WtDataManagementData.Dto
-@using WtSbAssistant.BlazorUI.Permissions
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement.Dto
 @using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities
+@using WtSbAssistant.BlazorUI.Permissions
 
 @inject ClanDataManagement ClanManagement
 @inject IJSRuntime Js
@@ -22,7 +22,7 @@
                 }
             </datalist>
             <span class="input-group-text">@Localizer["Count"]</span>
-            <input type="number" class="form-control" min="0" max="30" @bind="_resultCount" @bind:event="onchange" @bind:after="LoadMatches"/>
+            <input type="number" class="form-control" min="0" max="30" @bind="_resultCount" @bind:event="onchange" @bind:after="LoadMatches" />
         </div>
     </div>
     <div class="card-body container">
@@ -82,21 +82,21 @@
                         }
                     </div>
                 </div>
-                <div class="col">
-                    <h4>@Localizer["Clan"]</h4>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>@Localizer["PlayerName"]</th>
-                                <th>@Localizer["Vehicle"]</th>
-                                <th>@Localizer["Matches"]</th>
-                                <th>@Localizer["AirKills"]</th>
-                                <th>@Localizer["GroundKills"]</th>
-                                <th>@Localizer["Deaths"]</th>
-                            </tr>
-                        </thead>
-                        @if (_currentClan != null)
-                        {
+                @if (_currentClan != null)
+                {
+                    <div class="col">
+                        <h4>@_currentClan.Name</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer["PlayerName"]</th>
+                                    <th>@Localizer["Vehicle"]</th>
+                                    <th>@Localizer["Matches"]</th>
+                                    <th>@Localizer["AirKills"]</th>
+                                    <th>@Localizer["GroundKills"]</th>
+                                    <th>@Localizer["Deaths"]</th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 @foreach (var player in _currentClan.PlayerModels)
                                 {
@@ -107,7 +107,7 @@
                                         @if (player.Vehicles.Count > 1)
                                         {
                                             <td>
-                                                <a href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title="@vehicleList">@string.Join(", ", player.Vehicles.Select(v => v.Name))</a>
+                                                <span href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" data-bs-title="@vehicleList">@string.Join(", ", player.Vehicles.Select(v => v.Name))</span>
                                             </td>
                                         }
                                         else
@@ -121,9 +121,9 @@
                                     </tr>
                                 }
                             </tbody>
-                        }
-                    </table>
-                </div>
+                        </table>
+                    </div>
+                }
             </div>
         </div>
     </div>

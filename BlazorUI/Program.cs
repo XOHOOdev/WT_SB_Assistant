@@ -9,6 +9,8 @@ using WtSbAssistant.BlazorUI.Data.ConfigurationData;
 using WtSbAssistant.BlazorUI.Data.LoggingData;
 using WtSbAssistant.BlazorUI.Data.UserManagementData;
 using WtSbAssistant.BlazorUI.Data.WtDataManagementData;
+using WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement;
+using WtSbAssistant.BlazorUI.Data.WtDataManagementData.MyClanManagement;
 using WtSbAssistant.BlazorUI.Permissions;
 using WtSbAssistant.BlazorUI.Services;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
@@ -55,6 +57,7 @@ internal class Program
         builder.Services.AddScoped<LoggingService>();
         builder.Services.AddScoped<WtDataManagementService>();
         builder.Services.AddScoped<ClanDataManagement>();
+        builder.Services.AddScoped<MyClanManagement>();
         builder.Services.AddScoped<ConfigHelper>();
         builder.Services.AddScoped<WtSbAssistantLogger>();
         builder.Services.AddHttpClient();

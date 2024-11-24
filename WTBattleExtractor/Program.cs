@@ -88,6 +88,7 @@ internal class Program
     private static async Task SendLogs()
     {
         _log.Result = await Local.GetMatchResult();
+        _log.Time = DateTime.SpecifyKind(_log.Time, DateTimeKind.Unspecified);
         Console.WriteLine("Sending logs");
         await Server.PostLogsAsync(_log);
     }

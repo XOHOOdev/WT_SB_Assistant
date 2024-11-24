@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using WebAPI.Dto;
 using WTBattleExtractor.Dto;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 using WtSbAssistant.Core.Dto;
+using Exception = System.Exception;
 
 namespace WebAPI.Parser;
 
@@ -81,43 +81,6 @@ public static class WtLogParser
         };
     }
 
-    public static List<PlayerKd> ParsePlayerKd(List<DMO> dmos)
-    {
-        List<PlayerKd> kds = [];
-
-        foreach (var dmo in dmos)
-        {
-            if (kds.FirstOrDefault(kd => kd.Name == dmo.Player1) is not { } firstKd)
-            {
-                firstKd = new PlayerKd
-                {
-                    Name = dmo.Player1,
-                    VehicleName = dmo.Vehicle1.Substring(1, dmo.Vehicle1.Length - 2)
-                };
-                kds.Add(firstKd);
-            }
-
-            if (string.IsNullOrWhiteSpace(dmo.Player2)) continue;
-
-            if (kds.FirstOrDefault(kd => kd.Name == dmo.Player2) is not { } secondKd)
-            {
-                secondKd = new PlayerKd
-                {
-                    Name = dmo.Player2,
-                    VehicleName = dmo.Vehicle2.Substring(1, dmo.Vehicle2.Length - 2)
-                };
-                kds.Add(secondKd);
-            }
-
-            if (!KillActions.Contains(dmo.Action)) continue;
-
-            firstKd.Kills++;
-            secondKd.Deaths++;
-        }
-
-        return kds;
-    }
-
     public static List<WtBattleAction> ParsePlayerAction(List<DMO> dmos, List<WtPlayer> player, WtMatch match)
     {
         List<WtBattleAction> actions = [];
@@ -127,84 +90,91 @@ public static class WtLogParser
             WtBattleAction? firstAction;
             WtBattleAction? secondAction;
 
-            switch (dmo.Action)
+            try
             {
-                case "destroyed":
-                case "shot down":
-                    firstAction = new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.Killed,
-                        Player = player.First(p => p.Name == dmo.Player1),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                switch (dmo.Action)
+                {
+                    case "destroyed":
+                    case "shot down":
+                        firstAction = new WtBattleAction
                         {
-                            Name = dmo.Vehicle1
-                        }
-                    };
-                    secondAction = new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.Died,
-                        Player = player.First(p => p.Name == dmo.Player2),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                            ActionType = WtBattleActionType.Killed,
+                            Player = player.First(p => p.Name == dmo.Player1),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle1
+                            }
+                        };
+                        secondAction = new WtBattleAction
                         {
-                            Name = dmo.Vehicle2
-                        }
-                    };
-                    firstAction.LinkedAction = secondAction;
-                    actions.Add(firstAction);
-                    break;
-                case "has crashed":
-                    actions.Add(new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.Died,
-                        Player = player.First(p => p.Name == dmo.Player1),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                            ActionType = WtBattleActionType.Died,
+                            Player = player.First(p => p.Name == dmo.Player2),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle2
+                            }
+                        };
+                        firstAction.LinkedAction = secondAction;
+                        actions.Add(firstAction);
+                        break;
+                    case "has crashed":
+                        actions.Add(new WtBattleAction
                         {
-                            Name = dmo.Vehicle1
-                        }
-                    });
-                    break;
-                case "severely damaged":
-                case "set afire":
-                case "critically damaged":
-                    firstAction = new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.Damaged,
-                        Player = player.First(p => p.Name == dmo.Player1),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                            ActionType = WtBattleActionType.Died,
+                            Player = player.First(p => p.Name == dmo.Player1),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle1
+                            }
+                        });
+                        break;
+                    case "severely damaged":
+                    case "set afire":
+                    case "critically damaged":
+                        firstAction = new WtBattleAction
                         {
-                            Name = dmo.Vehicle1
-                        }
-                    };
-                    secondAction = new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.GotDamaged,
-                        Player = player.First(p => p.Name == dmo.Player2),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                            ActionType = WtBattleActionType.Damaged,
+                            Player = player.First(p => p.Name == dmo.Player1),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle1
+                            }
+                        };
+                        secondAction = new WtBattleAction
                         {
-                            Name = dmo.Vehicle2
-                        }
-                    };
-                    firstAction.LinkedAction = secondAction;
-                    actions.Add(firstAction);
-                    break;
-                case { } act when act.Contains("has achieved"):
-                    actions.Add(new WtBattleAction
-                    {
-                        ActionType = WtBattleActionType.Achieved,
-                        Player = player.First(p => p.Name == dmo.Player1),
-                        Match = match,
-                        Vehicle = new WtVehicle
+                            ActionType = WtBattleActionType.GotDamaged,
+                            Player = player.First(p => p.Name == dmo.Player2),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle2
+                            }
+                        };
+                        firstAction.LinkedAction = secondAction;
+                        actions.Add(firstAction);
+                        break;
+                    case { } act when act.Contains("has achieved"):
+                        actions.Add(new WtBattleAction
                         {
-                            Name = dmo.Vehicle1
-                        }
-                    });
-                    break;
-                default: continue;
+                            ActionType = WtBattleActionType.Achieved,
+                            Player = player.First(p => p.Name == dmo.Player1),
+                            Match = match,
+                            Vehicle = new WtVehicle
+                            {
+                                Name = dmo.Vehicle1
+                            }
+                        });
+                        break;
+                    default: continue;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 

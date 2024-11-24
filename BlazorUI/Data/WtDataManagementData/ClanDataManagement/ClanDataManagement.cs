@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
-using WtSbAssistant.BlazorUI.Data.WtDataManagementData.Dto;
+using WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement.Dto;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess;
 using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 using WtSbAssistant.Core.Helpers;
 using WtSbAssistant.Core.Logger;
 
-namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData
+namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement
 {
     public class ClanDataManagement(ApplicationDbContext<IdentityUser, ApplicationRole, string> context, ConfigHelper config, WtSbAssistantLogger logger)
     {

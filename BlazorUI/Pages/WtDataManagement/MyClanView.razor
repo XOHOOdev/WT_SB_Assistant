@@ -1,4 +1,36 @@
-﻿<h3>MyClanView</h3>
+﻿@using WtSbAssistant.BlazorUI.Authorization
+@using WtSbAssistant.BlazorUI.Data.WtDataManagementData.MyClanManagement
+@using WtSbAssistant.BlazorUI.Permissions
+
+@inject MyClanManagement ClanManagement
+@inject IJSRuntime Js
+@inject IStringLocalizer<WtDataManagement> Localizer
+@attribute [HasPermission(Permissions.WtDataManagement.View)]
+
+<h3>MyClanView</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Localizer["PlayerName"]</th>
+            <th>@Localizer["Vehicle"]</th>
+            <th>@Localizer["Matches"]</th>
+            <th>@Localizer["AirKills"]</th>
+            <th>@Localizer["GroundKills"]</th>
+            <th>@Localizer["Deaths"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Lorem</td>
+            <td>ipsum</td>
+            <td>sic</td>
+            <td>dolum</td>
+            <td>amet</td>
+            <td>amet</td>
+        </tr>
+    </tbody>
+</table>
 
 @code {
 

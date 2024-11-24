@@ -1,6 +1,6 @@
 ﻿using WtSbAssistant.Core.DataAccess.DatabaseAccess.Entities;
 
-namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData.Dto
+namespace WtSbAssistant.BlazorUI.Data.WtDataManagementData.ClanDataManagement.Dto
 {
     public class MatchModel
     {
